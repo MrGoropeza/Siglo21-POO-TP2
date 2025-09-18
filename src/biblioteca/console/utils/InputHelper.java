@@ -104,7 +104,6 @@ public class InputHelper {
         System.out.println("(Ingrese 0 para terminar la selección)");
 
         while (true) {
-            // Mostrar opciones disponibles
             for (int i = 0; i < opciones.size(); i++) {
                 System.out.println((i + 1) + ". " + opciones.get(i).toString());
             }

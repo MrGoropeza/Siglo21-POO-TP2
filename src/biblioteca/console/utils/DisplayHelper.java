@@ -11,11 +11,9 @@ public class DisplayHelper {
      * Limpia la pantalla de la consola
      */
     public static void limpiarPantalla() {
-        // Para sistemas Unix/Linux/Mac
         try {
             new ProcessBuilder("clear").inheritIO().start().waitFor();
         } catch (Exception e) {
-            // Si no funciona, imprime líneas vacías
             for (int i = 0; i < 50; i++) {
                 System.out.println();
             }
@@ -117,7 +115,6 @@ public class DisplayHelper {
             return;
         }
 
-        // Calcular ancho de columnas
         int[] anchos = new int[encabezados.length];
         for (int i = 0; i < encabezados.length; i++) {
             anchos[i] = encabezados[i].length();
@@ -133,11 +130,9 @@ public class DisplayHelper {
             }
         }
 
-        // Imprimir encabezados
         imprimirFilaTabla(encabezados, anchos);
         imprimirSeparadorTabla(anchos);
 
-        // Imprimir filas
         if (filas != null) {
             for (String[] fila : filas) {
                 imprimirFilaTabla(fila, anchos);

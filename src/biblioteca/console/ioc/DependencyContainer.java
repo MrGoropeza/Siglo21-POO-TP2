@@ -8,25 +8,25 @@ import biblioteca.data.database.AuthorRepository;
 import biblioteca.data.database.BookRepository;
 import biblioteca.data.database.CategoryRepository;
 import biblioteca.data.database.PublisherRepository;
+import biblioteca.data.dummy.AuthorDummyData;
+import biblioteca.data.dummy.BookDummyData;
+import biblioteca.data.dummy.CategoryDummyData;
+import biblioteca.data.dummy.PublisherDummyData;
 
 /**
  * Dependency injection container for initializing all application components
  */
 public class DependencyContainer {
 
-    // Repositories
     private BookRepository bookRepository;
     private AuthorRepository authorRepository;
     private CategoryRepository categoryRepository;
     private PublisherRepository publisherRepository;
 
-    // Use Cases
     private RegisterBookUseCase registerBookUseCase;
 
-    // Forms
     private RegisterBookForm registerBookForm;
 
-    // Controllers
     private BookController bookController;
     private MainController mainController;
 
@@ -56,8 +56,6 @@ public class DependencyContainer {
         return publisherRepository;
     }
 
-    // Getters for accessing initialized components
-
     public RegisterBookUseCase getRegisterBookUseCase() {
         return registerBookUseCase;
     }
@@ -79,6 +77,15 @@ public class DependencyContainer {
         authorRepository = new AuthorRepository();
         categoryRepository = new CategoryRepository();
         publisherRepository = new PublisherRepository();
+
+        authorRepository.loadDummyData(AuthorDummyData.getAuthors());
+        categoryRepository.loadDummyData(CategoryDummyData.getCategories());
+        publisherRepository.loadDummyData(PublisherDummyData.getPublishers());
+
+        bookRepository.loadDummyData(BookDummyData.getBooks(
+                authorRepository.findAll(),
+                categoryRepository.findAll(),
+                publisherRepository.findAll()));
     }
 
     private void initializeUseCases() {

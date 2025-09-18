@@ -80,7 +80,7 @@ public class MainController {
         if (totalBooks > 0) {
             System.out.println("\n=== ÚLTIMOS LIBROS REGISTRADOS ===");
             var books = bookRepository.findAll();
-            int start = Math.max(0, books.size() - 3); // Show last 3 books
+            int start = Math.max(0, books.size() - 3);
 
             for (int i = start; i < books.size(); i++) {
                 System.out.println("• " + books.get(i));

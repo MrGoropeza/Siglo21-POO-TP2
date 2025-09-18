@@ -12,15 +12,11 @@ public class CategoryRepository {
     private List<Category> categories = new ArrayList<>();
 
     public CategoryRepository() {
-        // Test data
-        categories.add(new Category(1, "Fiction"));
-        categories.add(new Category(2, "Non-Fiction"));
-        categories.add(new Category(3, "Science"));
-        categories.add(new Category(4, "History"));
-        categories.add(new Category(5, "Biography"));
-        categories.add(new Category(6, "Poetry"));
-        categories.add(new Category(7, "Drama"));
-        categories.add(new Category(8, "Essay"));
+    }
+
+    public void loadDummyData(List<Category> initialData) {
+        this.categories.clear();
+        this.categories.addAll(initialData);
     }
 
     /**

@@ -12,12 +12,11 @@ public class AuthorRepository {
     private List<Author> authors = new ArrayList<>();
 
     public AuthorRepository() {
-        // Test data
-        authors.add(new Author(1, "Gabriel García Márquez"));
-        authors.add(new Author(2, "Isabel Allende"));
-        authors.add(new Author(3, "Mario Vargas Llosa"));
-        authors.add(new Author(4, "Jorge Luis Borges"));
-        authors.add(new Author(5, "Octavio Paz"));
+    }
+
+    public void loadDummyData(List<Author> initialData) {
+        this.authors.clear();
+        this.authors.addAll(initialData);
     }
 
     /**

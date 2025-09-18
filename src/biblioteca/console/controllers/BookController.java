@@ -66,17 +66,14 @@ public class BookController {
     private void registerBook() {
         DisplayHelper.mostrarSubtitulo("Registrar Nuevo Libro");
 
-        // Capture data using form
         RegisterBookRequest request = registerBookForm.captureData();
 
         if (request == null) {
-            return; // User cancelled
+            return;
         }
 
-        // Execute use case
         RegisterBookResult result = registerBookUseCase.execute(request);
 
-        // Show result
         if (result.isSuccess()) {
             DisplayHelper.mostrarExito("Libro registrado exitosamente!");
             System.out.println("\n=== LIBRO REGISTRADO ===");

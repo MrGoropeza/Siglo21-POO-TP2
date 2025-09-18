@@ -12,6 +12,18 @@ public class BookRepository {
     private List<Book> books = new ArrayList<>();
     private int nextId = 1;
 
+    public BookRepository() {
+    }
+
+    public void loadDummyData(List<Book> initialData) {
+        this.books.clear();
+        this.books.addAll(initialData);
+        this.nextId = initialData.stream()
+                .mapToInt(Book::getId)
+                .max()
+                .orElse(0) + 1;
+    }
+
     /**
      * Saves a new book to the repository
      * 

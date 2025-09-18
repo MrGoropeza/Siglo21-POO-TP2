@@ -12,15 +12,11 @@ public class PublisherRepository {
     private List<Publisher> publishers = new ArrayList<>();
 
     public PublisherRepository() {
-        // Test data
-        publishers.add(new Publisher(1, "Penguin Random House"));
-        publishers.add(new Publisher(2, "HarperCollins"));
-        publishers.add(new Publisher(3, "Simon & Schuster"));
-        publishers.add(new Publisher(4, "Macmillan"));
-        publishers.add(new Publisher(5, "Hachette"));
-        publishers.add(new Publisher(6, "Planeta"));
-        publishers.add(new Publisher(7, "Santillana"));
-        publishers.add(new Publisher(8, "Alfaguara"));
+    }
+
+    public void loadDummyData(List<Publisher> initialData) {
+        this.publishers.clear();
+        this.publishers.addAll(initialData);
     }
 
     /**

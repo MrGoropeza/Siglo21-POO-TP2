@@ -10,7 +10,6 @@ public class App {
 
     public static void main(String[] args) {
         try {
-            // Initialize dependency injection container
             DisplayHelper.mostrarInfo("Inicializando sistema de biblioteca...");
 
             DependencyContainer container = new DependencyContainer();
@@ -18,7 +17,6 @@ public class App {
 
             DisplayHelper.mostrarExito("Sistema inicializado correctamente");
 
-            // Start main application
             container.getMainController().start();
 
         } catch (Exception e) {

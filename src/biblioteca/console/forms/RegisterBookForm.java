@@ -35,34 +35,28 @@ public class RegisterBookForm {
         DisplayHelper.mostrarSubtitulo("Registrar Nuevo Libro");
 
         try {
-            // Capture title
             String title = InputHelper.leerTextoObligatorio("Ingrese el título del libro");
 
-            // Select author
             Author selectedAuthor = selectAuthor();
             if (selectedAuthor == null) {
                 DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó autor");
                 return null;
             }
 
-            // Select category
             Category selectedCategory = selectCategory();
             if (selectedCategory == null) {
                 DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó categoría");
                 return null;
             }
 
-            // Select publisher
             Publisher selectedPublisher = selectPublisher();
             if (selectedPublisher == null) {
                 DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó editorial");
                 return null;
             }
 
-            // Capture year
             int year = InputHelper.leerEnteroEnRango("Ingrese el año de publicación", 1000, 2030);
 
-            // Confirm data before creating request
             if (confirmData(title, selectedAuthor, selectedCategory, selectedPublisher, year)) {
                 return new RegisterBookRequest(title, selectedAuthor.getId(),
                         selectedCategory.getId(), selectedPublisher.getId(), year);
