@@ -1,0 +1,156 @@
+classDiagram
+  direction BT
+
+  class Biblioteca {
+    -socios: List~Socio~
+    -libros: List~Libro~
+    -ejemplares: List~Ejemplar~
+    -prestamos: List~Prestamo~
+    -reservas: List~Reserva~
+    -notificaciones: List~Notificacion~
+    -parametros: ParametrosSistema
+    -colasEsperaPorLibro: Map~String, List~Reserva~~  // clave idLibro, orden por llegada
+    +registrarLibro(libro: Libro): void
+    +ingresarStock(idLibro: String, cantidad: int, origen: String): void  // valores admitidos: COMPRA o DONACION
+    +registrarSocio(socio: Socio): void
+    +crearPrestamo(idSocio: String, codigoEjemplar: String): Prestamo
+    +registrarDevolucion(codigoEjemplar: String): void
+    +crearReserva(idSocio: String, idsLibros: List~String~): Reserva
+    +atenderReserva(idLibro: String): void
+    +encolarReserva(idLibro: String, reserva: Reserva): void
+    +obtenerSiguienteReserva(idLibro: String): Reserva
+    +hayReservasPendientes(idLibro: String): boolean
+    +buscarLibroPorTitulo(titulo: String): List~Libro~
+    +enviarRecordatoriosVencimiento(): void
+    +reporteTopLibros(desde: Date, hasta: Date): List~Libro~
+    +reporteMoras(desde: Date, hasta: Date): List~Socio~
+    +reporteMultas(desde: Date, hasta: Date): double
+  }
+
+  class Libro {
+    -idLibro: String
+    -titulo: String
+    -resumen: String
+    -anio: int
+    -categoria: Categoria
+    -editorial: Editorial
+    -autores: List~Autor~
+  }
+
+  class Ejemplar {
+    -codigo: String
+    -estado: String    // valores admitidos: DISPONIBLE, PRESTADO, RESERVADO
+    -origen: String    // valores admitidos: COMPRA, DONACION
+    -libro: Libro
+    +esDisponible(): boolean
+    +marcarPrestado(): void
+    +marcarDisponible(): void
+  }
+
+  class Autor {
+    -idAutor: String
+    -nombre: String
+    -nacionalidad: String
+  }
+
+  class Categoria {
+    -idCategoria: String
+    -nombre: String
+    -descripcion: String
+  }
+
+  class Editorial {
+    -idEditorial: String
+    -nombre: String
+    -ciudad: String
+  }
+
+  class TipoSocio {
+    -idTipo: String
+    -nombre: String          // valores: Estandar, Estudiante, Jubilado
+    -descuentoMulta: double  // rango 0.0 a 1.0, por ejemplo 0.5
+    -diasExtraPrestamo: int  // ejemplo 3
+  }
+
+  class Socio {
+    -idSocio: String
+    -nombre: String
+    -email: String
+    -telefono: String
+    -tipo: TipoSocio
+    +puedePedir(param: ParametrosSistema, prestamosActivos: int): boolean
+  }
+
+  class Prestamo {
+    -idPrestamo: String
+    -fechaPrestamo: Date
+    -fechaVencimiento: Date
+    -fechaDevolucion: Date
+    -socio: Socio
+    -ejemplar: Ejemplar
+    -multa: Multa
+    +estaVencido(): boolean
+    +diasRetraso(): int
+    +marcarDevuelto(fecha: Date): void
+    +generarMulta(param: ParametrosSistema): Multa
+  }
+
+  class Multa {
+    -idMulta: String
+    -monto: double
+    -pagada: boolean
+    -prestamo: Prestamo
+    +pagar(): void
+    +estaPagada(): boolean
+  }
+
+  class Reserva {
+    -idReserva: String
+    -fechaReserva: Date
+    -activa: boolean
+    -socio: Socio
+    -libros: List~Libro~   // admite varios titulos en una misma reserva
+    +activar(): void
+    +cancelar(): void
+    +esActiva(): boolean
+  }
+
+  class Notificacion {
+    -idNotificacion: String
+    -canal: String     // canal actual: consola
+    -mensaje: String
+    -fecha: Date
+    -prestamo: Prestamo
+    -reserva: Reserva
+    +render(): String
+  }
+
+  class ParametrosSistema {
+    -diasEstandarPrestamo: int
+    -multaDiaria: double
+    -cupoMaximoPorSocio: int
+    -topeTitulosPorReserva: int
+    +calcularFechaVencimiento(base: Date, tipo: TipoSocio): Date
+    +calcularMontoMulta(diasRetraso: int, tipo: TipoSocio): double
+  }
+
+  %% Relaciones
+  Biblioteca "1" o-- "*" Libro
+  Biblioteca "1" o-- "*" Ejemplar
+  Biblioteca "1" o-- "*" Socio
+  Biblioteca "1" o-- "*" Prestamo
+  Biblioteca "1" o-- "*" Reserva
+  Biblioteca "1" o-- "*" Notificacion
+  Biblioteca "1" --> "1" ParametrosSistema
+
+  Libro "1" --> "1" Categoria
+  Libro "1" --> "1" Editorial
+  Libro "*" --> "*" Autor
+
+  Socio "1" --> "1" TipoSocio
+  Ejemplar "1" --> "1" Libro
+  Prestamo "1" --> "1" Ejemplar
+  Prestamo "1" --> "1" Socio
+  Prestamo "0..1" --> "1" Multa
+  Reserva "1" --> "1" Socio
+  Reserva "1" --> "*" Libro
