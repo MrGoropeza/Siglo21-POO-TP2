@@ -4,17 +4,28 @@ import biblioteca.application.libros.eliminar.DeleteBookUseCase;
 import biblioteca.application.libros.ingresar_stock.AddStockUseCase;
 import biblioteca.application.libros.modificar.ModifyBookUseCase;
 import biblioteca.application.libros.registrar.RegisterBookUseCase;
+import biblioteca.application.socios.consultar.QueryMemberUseCase;
+import biblioteca.application.socios.modificar.ModifyMemberUseCase;
+import biblioteca.application.socios.pagar_multa.PayFineUseCase;
+import biblioteca.application.socios.registrar.RegisterMemberUseCase;
 import biblioteca.console.controllers.BookController;
 import biblioteca.console.controllers.MainController;
+import biblioteca.console.controllers.MemberController;
 import biblioteca.console.forms.AddStockForm;
 import biblioteca.console.forms.DeleteBookForm;
 import biblioteca.console.forms.FindBookForm;
+import biblioteca.console.forms.FindMemberForm;
 import biblioteca.console.forms.ModifyBookForm;
+import biblioteca.console.forms.ModifyMemberForm;
+import biblioteca.console.forms.PayFineForm;
+import biblioteca.console.forms.QueryMemberForm;
 import biblioteca.console.forms.RegisterBookForm;
+import biblioteca.console.forms.RegisterMemberForm;
 import biblioteca.data.database.AuthorRepository;
 import biblioteca.data.database.BookRepository;
 import biblioteca.data.database.CategoryRepository;
 import biblioteca.data.database.CopyRepository;
+import biblioteca.data.database.MemberRepository;
 import biblioteca.data.database.PublisherRepository;
 import biblioteca.data.dummy.AuthorDummyData;
 import biblioteca.data.dummy.BookDummyData;
@@ -31,19 +42,30 @@ public class DependencyContainer {
     private CategoryRepository categoryRepository;
     private PublisherRepository publisherRepository;
     private CopyRepository copyRepository;
+    private MemberRepository memberRepository;
 
     private RegisterBookUseCase registerBookUseCase;
     private AddStockUseCase addStockUseCase;
     private ModifyBookUseCase modifyBookUseCase;
     private DeleteBookUseCase deleteBookUseCase;
+    private RegisterMemberUseCase registerMemberUseCase;
+    private ModifyMemberUseCase modifyMemberUseCase;
+    private QueryMemberUseCase queryMemberUseCase;
+    private PayFineUseCase payFineUseCase;
 
     private RegisterBookForm registerBookForm;
     private AddStockForm addStockForm;
     private ModifyBookForm modifyBookForm;
     private DeleteBookForm deleteBookForm;
     private FindBookForm findBookForm;
+    private RegisterMemberForm registerMemberForm;
+    private ModifyMemberForm modifyMemberForm;
+    private QueryMemberForm queryMemberForm;
+    private FindMemberForm findMemberForm;
+    private PayFineForm payFineForm;
 
     private BookController bookController;
+    private MemberController memberController;
     private MainController mainController;
 
     /**
@@ -116,6 +138,50 @@ public class DependencyContainer {
         return bookController;
     }
 
+    public MemberRepository getMemberRepository() {
+        return memberRepository;
+    }
+
+    public RegisterMemberUseCase getRegisterMemberUseCase() {
+        return registerMemberUseCase;
+    }
+
+    public ModifyMemberUseCase getModifyMemberUseCase() {
+        return modifyMemberUseCase;
+    }
+
+    public QueryMemberUseCase getQueryMemberUseCase() {
+        return queryMemberUseCase;
+    }
+
+    public PayFineUseCase getPayFineUseCase() {
+        return payFineUseCase;
+    }
+
+    public RegisterMemberForm getRegisterMemberForm() {
+        return registerMemberForm;
+    }
+
+    public ModifyMemberForm getModifyMemberForm() {
+        return modifyMemberForm;
+    }
+
+    public QueryMemberForm getQueryMemberForm() {
+        return queryMemberForm;
+    }
+
+    public FindMemberForm getFindMemberForm() {
+        return findMemberForm;
+    }
+
+    public PayFineForm getPayFineForm() {
+        return payFineForm;
+    }
+
+    public MemberController getMemberController() {
+        return memberController;
+    }
+
     public MainController getMainController() {
         return mainController;
     }
@@ -126,6 +192,7 @@ public class DependencyContainer {
         categoryRepository = new CategoryRepository();
         publisherRepository = new PublisherRepository();
         copyRepository = new CopyRepository();
+        memberRepository = new MemberRepository();
 
         authorRepository.loadDummyData(AuthorDummyData.getAuthors());
         categoryRepository.loadDummyData(CategoryDummyData.getCategories());
@@ -154,6 +221,11 @@ public class DependencyContainer {
         deleteBookUseCase = new DeleteBookUseCase(
                 bookRepository,
                 copyRepository);
+
+        registerMemberUseCase = new RegisterMemberUseCase(memberRepository);
+        modifyMemberUseCase = new ModifyMemberUseCase(memberRepository);
+        queryMemberUseCase = new QueryMemberUseCase(memberRepository);
+        payFineUseCase = new PayFineUseCase(memberRepository);
     }
 
     private void initializeForms() {
@@ -175,6 +247,12 @@ public class DependencyContainer {
         findBookForm = new FindBookForm(
                 bookRepository,
                 copyRepository);
+
+        registerMemberForm = new RegisterMemberForm();
+        modifyMemberForm = new ModifyMemberForm(memberRepository);
+        queryMemberForm = new QueryMemberForm(queryMemberUseCase);
+        findMemberForm = new FindMemberForm(memberRepository);
+        payFineForm = new PayFineForm(payFineUseCase, memberRepository);
     }
 
     private void initializeControllers() {
@@ -189,11 +267,24 @@ public class DependencyContainer {
                 deleteBookForm,
                 findBookForm);
 
+        memberController = new MemberController(
+                registerMemberUseCase,
+                modifyMemberUseCase,
+                queryMemberUseCase,
+                payFineUseCase,
+                registerMemberForm,
+                modifyMemberForm,
+                queryMemberForm,
+                findMemberForm,
+                payFineForm);
+
         mainController = new MainController(
                 bookController,
+                memberController,
                 bookRepository,
                 authorRepository,
                 categoryRepository,
-                publisherRepository);
+                publisherRepository,
+                memberRepository);
     }
 }
