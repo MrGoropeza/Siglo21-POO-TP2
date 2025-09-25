@@ -1,5 +1,3 @@
-package biblioteca;
-
 import biblioteca.console.ioc.DependencyContainer;
 import biblioteca.console.utils.DisplayHelper;
 

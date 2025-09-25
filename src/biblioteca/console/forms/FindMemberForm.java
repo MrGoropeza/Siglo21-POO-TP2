@@ -2,6 +2,9 @@ package biblioteca.console.forms;
 
 import java.util.List;
 
+import biblioteca.application.socios.consultar.QueryMemberRequest;
+import biblioteca.application.socios.consultar.QueryMemberResult;
+import biblioteca.application.socios.consultar.QueryMemberUseCase;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.data.database.MemberRepository;
@@ -9,13 +12,16 @@ import biblioteca.domain.entities.Member;
 
 /**
  * Form for finding/searching members by different criteria
- * Provides search functionality by ID or name with result display
+ * Provides search functionality by ID or name with detailed result display
+ * including activity summary
  */
 public class FindMemberForm {
     private final MemberRepository memberRepository;
+    private final QueryMemberUseCase queryMemberUseCase;
 
-    public FindMemberForm(MemberRepository memberRepository) {
+    public FindMemberForm(MemberRepository memberRepository, QueryMemberUseCase queryMemberUseCase) {
         this.memberRepository = memberRepository;
+        this.queryMemberUseCase = queryMemberUseCase;
     }
 
     /**
@@ -25,27 +31,21 @@ public class FindMemberForm {
         try {
             DisplayHelper.renderTitle("BUSCAR SOCIOS");
 
-            // Show search options
-            displaySearchOptions();
+            // Show search options using InputHelper
+            List<String> searchOptions = List.of("Buscar por ID", "Buscar por nombre");
+            String selectedOption = InputHelper.seleccionar(searchOptions, "Seleccione el método de búsqueda:");
 
-            // Get search method
-            int searchOption = getSearchOption();
-            if (searchOption == -1) {
-                return; // User cancelled
+            if (selectedOption == null) {
+                DisplayHelper.printInfo("Búsqueda cancelada.");
+                return;
             }
 
             // Execute search based on option
             List<Member> results = null;
-            switch (searchOption) {
-                case 1:
-                    results = searchById();
-                    break;
-                case 2:
-                    results = searchByName();
-                    break;
-                default:
-                    DisplayHelper.printErrorMessage("Opción no válida");
-                    return;
+            if (selectedOption.equals("Buscar por ID")) {
+                results = searchById();
+            } else if (selectedOption.equals("Buscar por nombre")) {
+                results = searchByName();
             }
 
             // Display results
@@ -53,35 +53,6 @@ public class FindMemberForm {
 
         } catch (Exception e) {
             DisplayHelper.printErrorMessage("Error inesperado: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Displays the available search options
-     */
-    private void displaySearchOptions() {
-        System.out.println("Seleccione el método de búsqueda:");
-        System.out.println("1. Buscar por ID");
-        System.out.println("2. Buscar por nombre");
-        System.out.println("0. Cancelar");
-    }
-
-    /**
-     * Gets the search option from user input
-     * 
-     * @return Search option (1-2) or -1 if cancelled
-     */
-    private int getSearchOption() {
-        try {
-            int option = InputHelper.leerEnteroEnRango("Seleccione opción", 0, 2);
-            if (option == 0) {
-                DisplayHelper.printInfo("Búsqueda cancelada.");
-                return -1;
-            }
-            return option;
-        } catch (Exception e) {
-            DisplayHelper.printErrorMessage("Entrada no válida");
-            return -1;
         }
     }
 
@@ -140,7 +111,19 @@ public class FindMemberForm {
 
         DisplayHelper.renderSubtitle("RESULTADOS DE BÚSQUEDA (" + results.size() + " encontrado(s))");
 
-        // Display results in a numbered list
+        // If only one result, show it directly and ask for detailed info
+        if (results.size() == 1) {
+            Member member = results.get(0);
+            System.out.println("Socio encontrado: " + member.toString());
+
+            System.out.println();
+            if (InputHelper.confirmar("¿Desea ver información detallada?")) {
+                showDetailedMemberInfoSingle(member);
+            }
+            return;
+        }
+
+        // Display results in a numbered list for multiple matches
         for (int i = 0; i < results.size(); i++) {
             Member member = results.get(i);
             System.out.printf("%d. %s%n", (i + 1), member.toString());
@@ -154,7 +137,46 @@ public class FindMemberForm {
     }
 
     /**
+     * Shows detailed information for a single member (when only one result is
+     * found)
+     * Includes comprehensive member data with activity summary
+     * 
+     * @param member The member to show detailed information for
+     */
+    private void showDetailedMemberInfoSingle(Member member) {
+        try {
+            // Use QueryMemberUseCase to get complete information including activity summary
+            QueryMemberRequest request = new QueryMemberRequest(member.getId());
+            QueryMemberResult result = queryMemberUseCase.execute(request);
+
+            System.out.println();
+            if (result.isSuccess()) {
+                displayCompleteMemberInformation(result);
+            } else {
+                // Fallback to basic information if QueryMemberUseCase fails
+                DisplayHelper.renderSubtitle("INFORMACIÓN DETALLADA");
+                System.out.println(member.toDetailedString());
+
+                // Show member type benefits
+                System.out.println();
+                DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
+                System.out.println("Categoría: " + member.getType().getDisplayName());
+                System.out.println(
+                        "Descuento en multas: " + (int) (member.getType().getFineDiscountPercentage() * 100) + "%");
+                System.out.println("Extensión de préstamo: +" + member.getType().getExtraLoanDays() + " días");
+
+                System.out.println();
+                DisplayHelper.printWarning("Nota: No se pudo obtener el resumen de actividad completo.");
+            }
+
+        } catch (Exception e) {
+            DisplayHelper.printErrorMessage("Error al obtener información detallada: " + e.getMessage());
+        }
+    }
+
+    /**
      * Shows detailed information for a selected member from the search results
+     * Includes comprehensive member data with activity summary
      * 
      * @param results List of members from search results
      */
@@ -168,24 +190,84 @@ public class FindMemberForm {
 
             Member selectedMember = results.get(selection - 1);
 
-            System.out.println();
-            DisplayHelper.renderSubtitle("INFORMACIÓN DETALLADA");
-            System.out.println(selectedMember.toDetailedString());
+            // Use QueryMemberUseCase to get complete information including activity summary
+            QueryMemberRequest request = new QueryMemberRequest(selectedMember.getId());
+            QueryMemberResult result = queryMemberUseCase.execute(request);
 
-            // Show member type benefits
             System.out.println();
-            DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
-            System.out.println("Categoría: " + selectedMember.getType().getDisplayName());
-            System.out.println(
-                    "Descuento en multas: " + (int) (selectedMember.getType().getFineDiscountPercentage() * 100) + "%");
-            System.out.println("Extensión de préstamo: +" + selectedMember.getType().getExtraLoanDays() + " días");
+            if (result.isSuccess()) {
+                displayCompleteMemberInformation(result);
+            } else {
+                // Fallback to basic information if QueryMemberUseCase fails
+                DisplayHelper.renderSubtitle("INFORMACIÓN DETALLADA");
+                System.out.println(selectedMember.toDetailedString());
+
+                // Show member type benefits
+                System.out.println();
+                DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
+                System.out.println("Categoría: " + selectedMember.getType().getDisplayName());
+                System.out.println(
+                        "Descuento en multas: " + (int) (selectedMember.getType().getFineDiscountPercentage() * 100)
+                                + "%");
+                System.out.println("Extensión de préstamo: +" + selectedMember.getType().getExtraLoanDays() + " días");
+
+                System.out.println();
+                DisplayHelper.printWarning("Nota: No se pudo obtener el resumen de actividad completo.");
+            }
 
         } catch (Exception e) {
             DisplayHelper.printErrorMessage("Selección no válida: " + e.getMessage());
         }
+    }
 
+    /**
+     * Displays comprehensive member information including activity summary
+     * 
+     * @param result The query result containing member data and summary
+     */
+    private void displayCompleteMemberInformation(QueryMemberResult result) {
+        DisplayHelper.renderSubtitle("INFORMACIÓN COMPLETA DEL SOCIO");
+
+        // Display basic member information
+        System.out.println(result.getMember().toDetailedString());
+
+        // Display activity summary
         System.out.println();
-        DisplayHelper.printInfo("Presione Enter para continuar...");
-        InputHelper.leerTexto("");
+        DisplayHelper.renderSubtitle("RESUMEN DE ACTIVIDAD");
+
+        QueryMemberResult.MemberSummary summary = result.getSummary();
+
+        System.out.printf("📚 Préstamos activos: %d%n", summary.getActiveLoans());
+        System.out.printf("⚠️  Multas pendientes: %d%n", summary.getTotalUnpaidFines());
+
+        if (summary.getTotalUnpaidAmount() > 0) {
+            System.out.printf("💰 Monto total adeudado: $%.2f%n", summary.getTotalUnpaidAmount());
+        }
+
+        System.out.printf("📋 Reservas activas: %d%n", summary.getActiveReservations());
+
+        // Display member status
+        System.out.println();
+        DisplayHelper.renderSubtitle("ESTADO DEL SOCIO");
+
+        if (summary.getTotalUnpaidFines() == 0) {
+            DisplayHelper.printSuccess("✅ El socio no tiene multas pendientes");
+        } else {
+            DisplayHelper.printWarning("⚠️  El socio tiene multas pendientes");
+        }
+
+        if (summary.getActiveLoans() == 0) {
+            DisplayHelper.printInfo("📚 El socio no tiene préstamos activos");
+        } else {
+            DisplayHelper.printInfo("📚 El socio tiene " + summary.getActiveLoans() + " préstamo(s) activo(s)");
+        }
+
+        // Display member benefits
+        System.out.println();
+        DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
+        System.out.println("Categoría: " + result.getMember().getType().getDisplayName());
+        System.out.println(
+                "Descuento en multas: " + (int) (result.getMember().getType().getFineDiscountPercentage() * 100) + "%");
+        System.out.println("Extensión de préstamo: +" + result.getMember().getType().getExtraLoanDays() + " días");
     }
 }

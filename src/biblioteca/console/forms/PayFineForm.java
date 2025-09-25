@@ -62,26 +62,84 @@ public class PayFineForm {
     }
 
     /**
-     * Allows user to select a member by ID
+     * Allows user to select a member by ID or name search
      * 
      * @return Selected member or null if cancelled/not found
      */
     private Member selectMember() {
-        System.out.println("Ingrese el ID del socio para pagar multas:");
-        String memberId = InputHelper.leerTexto("ID del socio");
+        DisplayHelper.renderSubtitle("BUSCAR SOCIO PARA PAGO DE MULTAS");
+
+        // Create search options using InputHelper
+        List<String> searchOptions = List.of("Buscar por ID", "Buscar por nombre");
+        String selectedOption = InputHelper.seleccionar(searchOptions, "Seleccione el método de búsqueda:");
+
+        if (selectedOption == null) {
+            DisplayHelper.printInfo("Búsqueda cancelada.");
+            return null;
+        }
+
+        // Execute search based on option
+        List<Member> results = null;
+        if (selectedOption.equals("Buscar por ID")) {
+            results = searchById();
+        } else if (selectedOption.equals("Buscar por nombre")) {
+            results = searchByName();
+        }
+
+        // Process search results
+        if (results == null || results.isEmpty()) {
+            DisplayHelper.printInfo("No se encontraron socios que coincidan con los criterios de búsqueda.");
+            return null;
+        }
+
+        // If only one result, select it automatically
+        if (results.size() == 1) {
+            Member selectedMember = results.get(0);
+            DisplayHelper.printInfo("Socio encontrado: " + selectedMember.toString());
+            return selectedMember;
+        }
+
+        // Multiple results - let user choose using InputHelper
+        return InputHelper.seleccionar(results, "Seleccione el socio para procesar pago de multas:");
+    }
+
+    /**
+     * Performs search by member ID
+     * 
+     * @return List containing the found member or empty list
+     */
+    private List<Member> searchById() {
+        System.out.println();
+        String memberId = InputHelper.leerTexto("Ingrese el ID del socio");
 
         if (memberId == null || memberId.trim().isEmpty()) {
-            DisplayHelper.printInfo("Operación cancelada.");
-            return null;
+            DisplayHelper.printInfo("Búsqueda cancelada.");
+            return List.of();
         }
 
         Member member = memberRepository.findById(memberId.trim());
-        if (member == null) {
-            DisplayHelper.printErrorMessage("No se encontró un socio con ID: " + memberId);
-            return null;
+        if (member != null) {
+            return List.of(member);
+        } else {
+            return List.of();
+        }
+    }
+
+    /**
+     * Performs search by member name (partial matching)
+     * 
+     * @return List of members matching the search criteria
+     */
+    private List<Member> searchByName() {
+        System.out.println();
+        String searchText = InputHelper.leerTexto("Ingrese el nombre o parte del nombre del socio");
+
+        if (searchText == null || searchText.trim().isEmpty()) {
+            DisplayHelper.printInfo("Búsqueda cancelada.");
+            return List.of();
         }
 
-        return member;
+        return memberRepository.searchByName(searchText.trim());
     }
 
     /**

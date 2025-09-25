@@ -227,6 +227,94 @@ src/biblioteca/console/controllers/MainController.java  // ← ACTUALIZAR menú 
 src/biblioteca/console/ioc/DependencyContainer.java     // ← ACTUALIZAR dependencias
 ```
 
+## 🛠️ **ESTÁNDARES DE IMPLEMENTACIÓN - UTILIDADES DE CONSOLA**
+
+### **📋 REGLAS OBLIGATORIAS PARA FORMS:**
+
+Todos los nuevos formularios **DEBEN** utilizar las utilidades estándar ya implementadas:
+
+#### **InputHelper.java - Manejo de Entrada:**
+
+```java
+// ✅ USAR SIEMPRE estas utilidades
+InputHelper.leerTexto(mensaje)                    // Entrada de texto
+InputHelper.leerTextoObligatorio(mensaje)         // Texto obligatorio
+InputHelper.leerEntero(mensaje)                   // Números enteros
+InputHelper.leerEnteroEnRango(mensaje, min, max)  // Enteros en rango
+InputHelper.seleccionar(lista, mensaje)           // Selección única de lista
+InputHelper.seleccionarMultiple(lista, mensaje)   // Selección múltiple
+InputHelper.confirmar(mensaje)                    // Confirmación S/N
+InputHelper.pausar(mensaje)                       // Pausa para continuar
+
+// ❌ NO recrear lógica manual de menús o selección
+```
+
+#### **DisplayHelper.java - Presentación:**
+
+```java
+// ✅ USAR SIEMPRE estas utilidades
+DisplayHelper.renderTitle(titulo)                 // Títulos principales
+DisplayHelper.renderSubtitle(subtitulo)          // Subtítulos con decoración
+DisplayHelper.printSuccess(mensaje)              // Mensajes de éxito
+DisplayHelper.printErrorMessage(mensaje)         // Mensajes de error
+DisplayHelper.printWarning(mensaje)              // Mensajes de advertencia
+DisplayHelper.printInfo(mensaje)                 // Mensajes informativos
+DisplayHelper.renderNumberedList(lista, titulo)  // Listas numeradas
+DisplayHelper.renderBulletList(lista, titulo)    // Listas con viñetas
+DisplayHelper.renderTable(headers, rows)         // Tablas formateadas
+DisplayHelper.renderMessageContainer(mensaje)    // Mensajes en cajas
+
+// ❌ NO usar System.out.println directamente para UI
+```
+
+### **✅ EJEMPLOS DE USO CORRECTO:**
+
+#### **Menús de Opciones:**
+
+```java
+// ✅ CORRECTO - Usar InputHelper.seleccionar()
+List<String> opciones = List.of("Opción 1", "Opción 2", "Opción 3");
+String seleccion = InputHelper.seleccionar(opciones, "Seleccione una opción:");
+
+// ❌ INCORRECTO - Lógica manual
+System.out.println("1. Opción 1");
+System.out.println("2. Opción 2");
+int opcion = InputHelper.leerEnteroEnRango("Seleccione", 1, 2);
+```
+
+#### **Selección de Entidades:**
+
+```java
+// ✅ CORRECTO - Selección directa de objetos
+List<Member> miembros = repository.findAll();
+Member seleccionado = InputHelper.seleccionar(miembros, "Seleccione un socio:");
+
+// ❌ INCORRECTO - Mostrar manualmente y seleccionar por índice
+for (int i = 0; i < miembros.size(); i++) {
+    System.out.println((i+1) + ". " + miembros.get(i));
+}
+```
+
+### **📝 CHECKLIST PARA NUEVOS FORMS:**
+
+- [ ] ✅ Usa `DisplayHelper.renderTitle()` para título principal
+- [ ] ✅ Usa `DisplayHelper.renderSubtitle()` para secciones
+- [ ] ✅ Usa `InputHelper.seleccionar()` para opciones/entidades
+- [ ] ✅ Usa `InputHelper.confirmar()` para confirmaciones S/N
+- [ ] ✅ Usa `DisplayHelper.printSuccess/Error/Warning/Info()` para mensajes
+- [ ] ✅ Usa `InputHelper.pausar()` al final si es necesario
+- [ ] ❌ NO usa `System.out.println()` para UI
+- [ ] ❌ NO recrea lógica de menús manualmente
+- [ ] ❌ NO implementa selección de listas manualmente
+
+### **🎯 BENEFICIOS DE SEGUIR ESTOS ESTÁNDARES:**
+
+1. **Consistencia visual** en toda la aplicación
+2. **Código más limpio** y mantenible
+3. **Reutilización** de componentes probados
+4. **UX uniforme** para el usuario
+5. **Menos bugs** por lógica duplicada
+
 ## 🎯 **RESUMEN DE IMPLEMENTACIÓN**
 
 **Total de archivos nuevos:** ~85 archivos  
@@ -253,39 +341,45 @@ src/biblioteca/console/ioc/DependencyContainer.java     // ← ACTUALIZAR depend
 - [x] DependencyContainer actualizado para libros
 - [x] Arquitectura Clean Architecture establecida
 - [x] Imports optimizados en BookController
-- [x] Módulo de Libros 100% completado
+- [x] **Módulo de Libros 100% completado**
+
+- [x] Entidades Member y MemberType con beneficios por tipo de socio
+- [x] Use Cases de socios (RegisterMember, ModifyMember, QueryMember, PayFine)
+- [x] MemberRepository con operaciones CRUD y búsqueda
+- [x] MemberDummyData con datos de prueba
+- [x] Forms de socios (RegisterMemberForm, ModifyMemberForm, QueryMemberForm, FindMemberForm, PayFineForm)
+- [x] MemberController con menú de 6 opciones
+- [x] DependencyContainer actualizado con componentes de socios
+- [x] MainController integrado con opción "2. Gestión de Socios"
+- [x] **Módulo de Socios 100% completado**
 
 ### 🆕 **PENDIENTE POR MÓDULO**
-
-#### **SOCIOS (Prioridad 1)**
-
-- [x] Crear entidades: Member, MemberType
-- [x] Crear use cases: RegisterMember, ModifyMember, QueryMember, PayFine
-- [x] Crear MemberRepository
-- [x] Crear datos dummy: MemberDummyData
-- [x] Crear forms: RegisterMemberForm, ModifyMemberForm
-- [ ] Crear forms: QueryMemberForm, FindMemberForm, PayFineForm
-- [ ] Crear MemberController
-- [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "2. Socios" al menú principal
 
 **📋 TODOs pendientes para completar en módulos futuros:**
 
 - [ ] **PayFineUseCase**: Integrar FineRepository para pagos reales de multas (Prioridad 3)
 - [ ] **QueryMemberUseCase**: Integrar LoanRepository y FineRepository para mostrar préstamos activos y multas reales (Prioridad 2-3)
 
-**🔧 MEJORAS PENDIENTES PARA MÓDULO SOCIOS:**
+**✅ MEJORAS COMPLETADAS PARA MÓDULO SOCIOS:**
 
-- [ ] **Revisar QueryMemberForm vs FindMemberForm**:
+- [x] **Revisar QueryMemberForm vs FindMemberForm**:
 
-  - Analizar si QueryMemberForm es necesario ya que FindMemberForm parece cumplir la misma función
-  - Considerar consolidar ambas funcionalidades en una sola form más completa
-  - Evaluar diferencias en el flujo de usuario y decidir cuál mantener
+  - ✅ **ANÁLISIS COMPLETADO**: SÍ eran redundantes después de revisión práctica
+  - ✅ **SOLUCIÓN**: QueryMemberForm eliminado, funcionalidad consolidada en FindMemberForm
+  - ✅ **FindMemberForm mejorado**: Ahora incluye resumen de actividad completo usando QueryMemberUseCase
+  - ✅ **Menú simplificado**: MemberController reducido de 6 a 5 opciones (3. "Buscar y consultar socio")
 
-- [ ] **Mejorar PayFineForm**:
-  - Cambiar implementación actual que pide ID del socio por consola
-  - Implementar búsqueda de socio por ID o por nombre (similar a FindMemberForm)
-  - Permitir al usuario elegir cómo buscar al socio antes de procesar el pago de multa
+- [x] **Mejorar PayFineForm**:
+
+  - ✅ Implementada búsqueda de socio por ID o por nombre usando InputHelper.seleccionar()
+  - ✅ Eliminado código duplicado de menús manuales
+  - ✅ Mejorada experiencia de usuario con selección intuitiva
+
+- [x] **Optimizar uso de InputHelper**:
+  - ✅ **PayFineForm**: Refactorizado para usar InputHelper.seleccionar() en lugar de lógica manual
+  - ✅ **FindMemberForm**: Optimizado para usar InputHelper.seleccionar() para opciones de búsqueda
+  - ✅ **Código más limpio**: Eliminados métodos redundantes (displaySearchOptions, getSearchOption, selectFromMultipleResults)
+  - ✅ **Consistencia**: Todas las forms ahora usan las utilidades estándar de InputHelper
 
 #### **PRÉSTAMOS (Prioridad 2)**
 
@@ -408,6 +502,25 @@ Durante la revisión del módulo SOCIOS, se identificaron las siguientes mejoras
 - 🔴 **TODOs Críticos**: Se implementan en la fase de "Integración de TODOs Pendientes"
 - 🟡 **TODOs Menores**: Se pueden completar durante el desarrollo de cada módulo
 - ✅ **TODOs Completados**: Se marcan como completados y se documentan
+
+### **🛠️ RECORDATORIO CRÍTICO - UTILIDADES DE CONSOLA:**
+
+**ANTES de implementar CUALQUIER nuevo form, SIEMPRE revisar:**
+
+- ✅ **InputHelper.java**: `seleccionar()`, `confirmar()`, `leerTexto()`, etc.
+- ✅ **DisplayHelper.java**: `renderTitle()`, `printSuccess()`, `renderSubtitle()`, etc.
+- ❌ **NO recrear** lógica de menús, selección o formateo manualmente
+- ❌ **NO usar** `System.out.println()` directamente para UI
+
+**Módulos implementados CORRECTAMENTE usando utilities:**
+
+- ✅ LIBROS: BookController y forms optimizados
+- ✅ SOCIOS: MemberController y forms optimizados (PayFineForm, FindMemberForm)
+
+**Al implementar PRÉSTAMOS, DEVOLUCIONES, RESERVAS, etc.:**
+
+- ✅ Seguir los patrones ya establecidos
+- ✅ Usar el checklist de utilities documentado arriba
 
 ## 🎯 **ESTRATEGIA DE DESARROLLO Y TESTING POR FASES**
 

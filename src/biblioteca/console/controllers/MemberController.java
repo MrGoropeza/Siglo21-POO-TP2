@@ -1,13 +1,11 @@
 package biblioteca.console.controllers;
 
-import biblioteca.application.socios.consultar.QueryMemberUseCase;
 import biblioteca.application.socios.modificar.ModifyMemberUseCase;
 import biblioteca.application.socios.pagar_multa.PayFineUseCase;
 import biblioteca.application.socios.registrar.RegisterMemberUseCase;
 import biblioteca.console.forms.FindMemberForm;
 import biblioteca.console.forms.ModifyMemberForm;
 import biblioteca.console.forms.PayFineForm;
-import biblioteca.console.forms.QueryMemberForm;
 import biblioteca.console.forms.RegisterMemberForm;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
@@ -19,30 +17,24 @@ import biblioteca.console.utils.InputHelper;
 public class MemberController {
     private final RegisterMemberUseCase registerMemberUseCase;
     private final ModifyMemberUseCase modifyMemberUseCase;
-    private final QueryMemberUseCase queryMemberUseCase;
     private final PayFineUseCase payFineUseCase;
     private final RegisterMemberForm registerMemberForm;
     private final ModifyMemberForm modifyMemberForm;
-    private final QueryMemberForm queryMemberForm;
     private final FindMemberForm findMemberForm;
     private final PayFineForm payFineForm;
 
     public MemberController(RegisterMemberUseCase registerMemberUseCase,
             ModifyMemberUseCase modifyMemberUseCase,
-            QueryMemberUseCase queryMemberUseCase,
             PayFineUseCase payFineUseCase,
             RegisterMemberForm registerMemberForm,
             ModifyMemberForm modifyMemberForm,
-            QueryMemberForm queryMemberForm,
             FindMemberForm findMemberForm,
             PayFineForm payFineForm) {
         this.registerMemberUseCase = registerMemberUseCase;
         this.modifyMemberUseCase = modifyMemberUseCase;
-        this.queryMemberUseCase = queryMemberUseCase;
         this.payFineUseCase = payFineUseCase;
         this.registerMemberForm = registerMemberForm;
         this.modifyMemberForm = modifyMemberForm;
-        this.queryMemberForm = queryMemberForm;
         this.findMemberForm = findMemberForm;
         this.payFineForm = payFineForm;
     }
@@ -59,20 +51,18 @@ public class MemberController {
 
                 System.out.println("1. Registrar nuevo socio");
                 System.out.println("2. Modificar datos del socio");
-                System.out.println("3. Consultar información del socio");
-                System.out.println("4. Buscar socio");
-                System.out.println("5. Pagar multas");
-                System.out.println("6. Volver al menú principal");
+                System.out.println("3. Buscar y consultar socio");
+                System.out.println("4. Pagar multas");
+                System.out.println("5. Volver al menú principal");
 
-                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 6);
+                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 5);
 
                 switch (opcion) {
                     case 1 -> registerMember();
                     case 2 -> modifyMember();
-                    case 3 -> queryMember();
-                    case 4 -> findMember();
-                    case 5 -> payFines();
-                    case 6 -> {
+                    case 3 -> findMember();
+                    case 4 -> payFines();
+                    case 5 -> {
                         continuar = false;
                         DisplayHelper.printInfo("Volviendo al menú principal...");
                     }
@@ -126,17 +116,6 @@ public class MemberController {
             }
         } catch (Exception e) {
             DisplayHelper.printErrorMessage("Error al modificar socio: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Handles member information query through the form
-     */
-    private void queryMember() {
-        try {
-            queryMemberForm.execute();
-        } catch (Exception e) {
-            DisplayHelper.printErrorMessage("Error al consultar socio: " + e.getMessage());
         }
     }
 

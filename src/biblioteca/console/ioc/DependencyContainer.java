@@ -18,7 +18,6 @@ import biblioteca.console.forms.FindMemberForm;
 import biblioteca.console.forms.ModifyBookForm;
 import biblioteca.console.forms.ModifyMemberForm;
 import biblioteca.console.forms.PayFineForm;
-import biblioteca.console.forms.QueryMemberForm;
 import biblioteca.console.forms.RegisterBookForm;
 import biblioteca.console.forms.RegisterMemberForm;
 import biblioteca.data.database.AuthorRepository;
@@ -60,7 +59,6 @@ public class DependencyContainer {
     private FindBookForm findBookForm;
     private RegisterMemberForm registerMemberForm;
     private ModifyMemberForm modifyMemberForm;
-    private QueryMemberForm queryMemberForm;
     private FindMemberForm findMemberForm;
     private PayFineForm payFineForm;
 
@@ -166,10 +164,6 @@ public class DependencyContainer {
         return modifyMemberForm;
     }
 
-    public QueryMemberForm getQueryMemberForm() {
-        return queryMemberForm;
-    }
-
     public FindMemberForm getFindMemberForm() {
         return findMemberForm;
     }
@@ -250,8 +244,8 @@ public class DependencyContainer {
 
         registerMemberForm = new RegisterMemberForm();
         modifyMemberForm = new ModifyMemberForm(memberRepository);
-        queryMemberForm = new QueryMemberForm(queryMemberUseCase);
-        findMemberForm = new FindMemberForm(memberRepository);
+
+        findMemberForm = new FindMemberForm(memberRepository, queryMemberUseCase);
         payFineForm = new PayFineForm(payFineUseCase, memberRepository);
     }
 
@@ -270,11 +264,9 @@ public class DependencyContainer {
         memberController = new MemberController(
                 registerMemberUseCase,
                 modifyMemberUseCase,
-                queryMemberUseCase,
                 payFineUseCase,
                 registerMemberForm,
                 modifyMemberForm,
-                queryMemberForm,
                 findMemberForm,
                 payFineForm);
 
