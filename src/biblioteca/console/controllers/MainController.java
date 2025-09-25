@@ -37,8 +37,8 @@ public class MainController {
 
         while (continuar) {
             try {
-                DisplayHelper.limpiarPantalla();
-                DisplayHelper.mostrarTitulo("SISTEMA DE GESTIÓN DE BIBLIOTECA");
+                DisplayHelper.clearScreen();
+                DisplayHelper.renderTitle("SISTEMA DE GESTIÓN DE BIBLIOTECA");
 
                 System.out.println("1. Gestión de Libros");
                 System.out.println("2. Ver estadísticas del sistema");
@@ -52,20 +52,20 @@ public class MainController {
                     case 3 -> {
                         if (InputHelper.confirmar("¿Está seguro que desea salir?")) {
                             continuar = false;
-                            DisplayHelper.mostrarExito("¡Gracias por usar el sistema de biblioteca!");
+                            DisplayHelper.printSuccess("¡Gracias por usar el sistema de biblioteca!");
                         }
                     }
                 }
 
             } catch (Exception e) {
-                DisplayHelper.mostrarError("Error en el menú principal: " + e.getMessage());
+                DisplayHelper.printErrorMessage("Error en el menú principal: " + e.getMessage());
                 InputHelper.pausar();
             }
         }
     }
 
     private void showSystemStats() {
-        DisplayHelper.mostrarSubtitulo("Estadísticas del Sistema");
+        DisplayHelper.renderSubtitle("Estadísticas del Sistema");
 
         int totalBooks = bookRepository.findAll().size();
         int totalAuthors = authorRepository.findAll().size();

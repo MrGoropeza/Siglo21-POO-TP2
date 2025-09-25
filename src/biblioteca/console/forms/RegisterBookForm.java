@@ -32,26 +32,26 @@ public class RegisterBookForm {
      * @return RegisterBookRequest with the captured data, or null if cancelled
      */
     public RegisterBookRequest captureData() {
-        DisplayHelper.mostrarSubtitulo("Registrar Nuevo Libro");
+        DisplayHelper.renderSubtitle("Registrar Nuevo Libro");
 
         try {
             String title = InputHelper.leerTextoObligatorio("Ingrese el título del libro");
 
             Author selectedAuthor = selectAuthor();
             if (selectedAuthor == null) {
-                DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó autor");
+                DisplayHelper.printWarning("Registro cancelado - No se seleccionó autor");
                 return null;
             }
 
             Category selectedCategory = selectCategory();
             if (selectedCategory == null) {
-                DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó categoría");
+                DisplayHelper.printWarning("Registro cancelado - No se seleccionó categoría");
                 return null;
             }
 
             Publisher selectedPublisher = selectPublisher();
             if (selectedPublisher == null) {
-                DisplayHelper.mostrarAdvertencia("Registro cancelado - No se seleccionó editorial");
+                DisplayHelper.printWarning("Registro cancelado - No se seleccionó editorial");
                 return null;
             }
 
@@ -61,12 +61,12 @@ public class RegisterBookForm {
                 return new RegisterBookRequest(title, selectedAuthor.getId(),
                         selectedCategory.getId(), selectedPublisher.getId(), year);
             } else {
-                DisplayHelper.mostrarAdvertencia("Registro cancelado por el usuario");
+                DisplayHelper.printWarning("Registro cancelado por el usuario");
                 return null;
             }
 
         } catch (Exception e) {
-            DisplayHelper.mostrarError("Error al capturar datos: " + e.getMessage());
+            DisplayHelper.printErrorMessage("Error al capturar datos: " + e.getMessage());
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class RegisterBookForm {
     private Author selectAuthor() {
         var authors = authorRepository.findAll();
         if (authors.isEmpty()) {
-            DisplayHelper.mostrarError("No hay autores disponibles. Debe crear autores primero.");
+            DisplayHelper.printErrorMessage("No hay autores disponibles. Debe crear autores primero.");
             return null;
         }
 
@@ -84,7 +84,7 @@ public class RegisterBookForm {
     private Category selectCategory() {
         var categories = categoryRepository.findAll();
         if (categories.isEmpty()) {
-            DisplayHelper.mostrarError("No hay categorías disponibles. Debe crear categorías primero.");
+            DisplayHelper.printErrorMessage("No hay categorías disponibles. Debe crear categorías primero.");
             return null;
         }
 
@@ -94,7 +94,7 @@ public class RegisterBookForm {
     private Publisher selectPublisher() {
         var publishers = publisherRepository.findAll();
         if (publishers.isEmpty()) {
-            DisplayHelper.mostrarError("No hay editoriales disponibles. Debe crear editoriales primero.");
+            DisplayHelper.printErrorMessage("No hay editoriales disponibles. Debe crear editoriales primero.");
             return null;
         }
 

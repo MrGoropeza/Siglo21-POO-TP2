@@ -3,14 +3,14 @@ package biblioteca.console.utils;
 import java.util.List;
 
 /**
- * Utilidad para manejar la visualización de datos en consola
+ * Utility to handle displaying data in the console
  */
 public class DisplayHelper {
 
     /**
-     * Limpia la pantalla de la consola
+     * Clears the console screen
      */
-    public static void limpiarPantalla() {
+    public static void clearScreen() {
         try {
             new ProcessBuilder("clear").inheritIO().start().waitFor();
         } catch (Exception e) {
@@ -21,9 +21,9 @@ public class DisplayHelper {
     }
 
     /**
-     * Muestra un título centrado con decoración
+     * Displays a centered title with decoration
      */
-    public static void mostrarTitulo(String titulo) {
+    public static void renderTitle(String titulo) {
         int ancho = 60;
         String linea = "=".repeat(ancho);
         int espacios = (ancho - titulo.length()) / 2;
@@ -35,48 +35,48 @@ public class DisplayHelper {
     }
 
     /**
-     * Muestra un subtítulo con decoración menor
+     * Displays a subtitle with minor decoration
      */
-    public static void mostrarSubtitulo(String subtitulo) {
+    public static void renderSubtitle(String subtitulo) {
         String linea = "-".repeat(40);
         System.out.println("\n" + subtitulo);
         System.out.println(linea);
     }
 
     /**
-     * Muestra un mensaje de éxito
+     * Displays a success message
      */
-    public static void mostrarExito(String mensaje) {
+    public static void printSuccess(String mensaje) {
         System.out.println("✓ " + mensaje);
     }
 
     /**
-     * Muestra un mensaje de error
+     * Displays an error message
      */
-    public static void mostrarError(String mensaje) {
+    public static void printErrorMessage(String mensaje) {
         System.out.println("✗ Error: " + mensaje);
     }
 
     /**
-     * Muestra un mensaje de advertencia
+     * Displays a warning message
      */
-    public static void mostrarAdvertencia(String mensaje) {
+    public static void printWarning(String mensaje) {
         System.out.println("⚠ Advertencia: " + mensaje);
     }
 
     /**
-     * Muestra un mensaje informativo
+     * Displays an informational message
      */
-    public static void mostrarInfo(String mensaje) {
-        System.out.println("ℹ " + mensaje);
+    public static void printInfo(String mensaje) {
+        System.out.println("(i) " + mensaje);
     }
 
     /**
-     * Muestra una lista numerada de objetos
+     * Displays a numbered list of objects
      */
-    public static <T> void mostrarLista(List<T> elementos, String titulo) {
+    public static <T> void renderNumberedList(List<T> elementos, String titulo) {
         if (titulo != null && !titulo.isEmpty()) {
-            mostrarSubtitulo(titulo);
+            renderSubtitle(titulo);
         }
 
         if (elementos == null || elementos.isEmpty()) {
@@ -90,11 +90,11 @@ public class DisplayHelper {
     }
 
     /**
-     * Muestra una lista simple sin numeración
+     * Displays a simple bullet list
      */
-    public static <T> void mostrarListaSimple(List<T> elementos, String titulo) {
+    public static <T> void renderBulletList(List<T> elementos, String titulo) {
         if (titulo != null && !titulo.isEmpty()) {
-            mostrarSubtitulo(titulo);
+            renderSubtitle(titulo);
         }
 
         if (elementos == null || elementos.isEmpty()) {
@@ -108,9 +108,9 @@ public class DisplayHelper {
     }
 
     /**
-     * Muestra una tabla con encabezados y filas
+     * Displays a table with headers and rows
      */
-    public static void mostrarTabla(String[] encabezados, List<String[]> filas) {
+    public static void renderTable(String[] encabezados, List<String[]> filas) {
         if (encabezados == null || encabezados.length == 0) {
             return;
         }
@@ -130,20 +130,20 @@ public class DisplayHelper {
             }
         }
 
-        imprimirFilaTabla(encabezados, anchos);
-        imprimirSeparadorTabla(anchos);
+        renderTableRow(encabezados, anchos);
+        renderTableDivider(anchos);
 
         if (filas != null) {
             for (String[] fila : filas) {
-                imprimirFilaTabla(fila, anchos);
+                renderTableRow(fila, anchos);
             }
         }
     }
 
     /**
-     * Muestra un mensaje con formato de caja
+     * Displays a message with box formatting
      */
-    public static void mostrarCaja(String mensaje) {
+    public static void renderMessageContainer(String mensaje) {
         int ancho = mensaje.length() + 4;
         String lineaHorizontal = "+" + "-".repeat(ancho - 2) + "+";
 
@@ -153,9 +153,9 @@ public class DisplayHelper {
     }
 
     /**
-     * Muestra múltiples mensajes en una caja
+     * Displays multiple messages with box formatting
      */
-    public static void mostrarCaja(List<String> mensajes) {
+    public static void renderMessageContainer(List<String> mensajes) {
         if (mensajes == null || mensajes.isEmpty()) {
             return;
         }
@@ -171,7 +171,7 @@ public class DisplayHelper {
         System.out.println(lineaHorizontal);
     }
 
-    private static void imprimirFilaTabla(String[] columnas, int[] anchos) {
+    private static void renderTableRow(String[] columnas, int[] anchos) {
         System.out.print("| ");
         for (int i = 0; i < columnas.length; i++) {
             String valor = columnas[i] != null ? columnas[i] : "";
@@ -180,7 +180,7 @@ public class DisplayHelper {
         System.out.println();
     }
 
-    private static void imprimirSeparadorTabla(int[] anchos) {
+    private static void renderTableDivider(int[] anchos) {
         System.out.print("+-");
         for (int i = 0; i < anchos.length; i++) {
             System.out.print("-".repeat(anchos[i]) + "-+-");

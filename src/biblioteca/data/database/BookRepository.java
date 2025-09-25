@@ -114,4 +114,26 @@ public class BookRepository {
         }
         return null;
     }
+
+    /**
+     * Searches books by a text query in all fields (case insensitive)
+     * 
+     * @param query The search text
+     * @return List of books matching the query
+     */
+    public List<Book> searchByText(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        String searchTerm = query.toLowerCase().trim();
+
+        return books.stream()
+                .filter(book -> book.getTitle().toLowerCase().contains(searchTerm) ||
+                        book.getAuthor().getName().toLowerCase().contains(searchTerm) ||
+                        book.getCategory().getName().toLowerCase().contains(searchTerm) ||
+                        book.getPublisher().getName().toLowerCase().contains(searchTerm) ||
+                        String.valueOf(book.getYear()).contains(searchTerm))
+                .toList();
+    }
 }
