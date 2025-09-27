@@ -1,6 +1,6 @@
 package biblioteca.application.socios.modificar;
 
-import biblioteca.domain.entities.MemberType;
+import biblioteca.domain.enums.MemberType;
 
 /**
  * Request object for modifying a member

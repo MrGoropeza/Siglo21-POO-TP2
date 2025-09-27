@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import biblioteca.data.dummy.MemberDummyData;
 import biblioteca.domain.entities.Member;
-import biblioteca.domain.entities.MemberType;
+import biblioteca.domain.enums.MemberType;
 
 /**
  * Repository for Member entity operations

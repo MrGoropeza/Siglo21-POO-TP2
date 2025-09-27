@@ -1,4 +1,4 @@
-package biblioteca.domain.entities;
+package biblioteca.domain.enums;
 
 /**
  * Enum representing the possible states of a book copy

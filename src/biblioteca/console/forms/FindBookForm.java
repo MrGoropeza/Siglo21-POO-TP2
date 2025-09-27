@@ -62,10 +62,10 @@ public class FindBookForm {
             Book book = books.get(i);
             java.util.List<Copy> copies = copyRepository.findByBook(book);
             long availableCopies = copies.stream()
-                    .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.AVAILABLE)
+                    .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.AVAILABLE)
                     .count();
             long loanedCopies = copies.stream()
-                    .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.LOANED)
+                    .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.LOANED)
                     .count();
 
             System.out.printf("%d. %s | DISPONIBLES: %d | PRESTADOS: %d | TOTAL: %d\n",
@@ -90,13 +90,13 @@ public class FindBookForm {
             System.out.println("No hay ejemplares registrados para este libro.");
         } else {
             long availableCopies = copies.stream()
-                    .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.AVAILABLE)
+                    .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.AVAILABLE)
                     .count();
             long loanedCopies = copies.stream()
-                    .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.LOANED)
+                    .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.LOANED)
                     .count();
             long reservedCopies = copies.stream()
-                    .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.RESERVED)
+                    .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.RESERVED)
                     .count();
 
             System.out.println("\n=== EJEMPLARES ===");

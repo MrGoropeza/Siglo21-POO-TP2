@@ -64,7 +64,7 @@ public class DeleteBookForm {
         // Obtener información de ejemplares
         java.util.List<Copy> copies = copyRepository.findByBook(book);
         long loanedCopies = copies.stream()
-                .filter(copy -> copy.getState() == biblioteca.domain.entities.CopyState.LOANED)
+                .filter(copy -> copy.getState() == biblioteca.domain.enums.CopyState.LOANED)
                 .count();
 
         // Mostrar información del libro a eliminar

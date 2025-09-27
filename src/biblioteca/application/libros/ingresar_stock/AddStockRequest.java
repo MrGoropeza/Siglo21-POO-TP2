@@ -1,6 +1,6 @@
 package biblioteca.application.libros.ingresar_stock;
 
-import biblioteca.domain.entities.CopyOrigin;
+import biblioteca.domain.enums.CopyOrigin;
 
 /**
  * Request for adding stock to a book

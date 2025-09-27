@@ -2,6 +2,9 @@ package biblioteca.domain.entities;
 
 import java.util.Objects;
 
+import biblioteca.domain.enums.CopyOrigin;
+import biblioteca.domain.enums.CopyState;
+
 /**
  * Copy entity representing a physical copy of a book in the library
  */

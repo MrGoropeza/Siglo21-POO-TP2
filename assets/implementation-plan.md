@@ -22,21 +22,29 @@ Según los requisitos, el menú principal sería:
 
 ## 📁 **ARCHIVOS A CREAR**
 
-### **1. ENTIDADES DEL DOMINIO (Domain Layer)**
+### **1. ENTIDADES DEL DOMINIO (Domain Layer)** ✅ **COMPLETADO**
 
 ```
 src/biblioteca/domain/entities/
-├── Member.java              // Socio
-├── MemberType.java          // TipoSocio (Enum: STANDARD, STUDENT, RETIRED)
-├── Loan.java               // Prestamo
-├── Fine.java               // Multa
-├── Reservation.java        // Reserva
-├── Notification.java       // Notificacion
-├── SystemParameters.java   // ParametrosSistema
-└── enums/
-    ├── LoanState.java      // Estado préstamo (ACTIVE, RETURNED, OVERDUE)
-    ├── ReservationState.java // Estado reserva (ACTIVE, CANCELLED, FULFILLED)
-    └── NotificationChannel.java // Canal (CONSOLE)
+├── Author.java              // ✅ Autor
+├── Book.java               // ✅ Libro
+├── Category.java           // ✅ Categoría
+├── Copy.java               // ✅ Ejemplar
+├── Publisher.java          // ✅ Editorial
+├── Member.java             // ✅ Socio
+├── Loan.java               // ✅ Préstamo
+├── Fine.java               // ✅ Multa
+├── Reservation.java        // ✅ Reserva
+├── Notification.java       // ✅ Notificación
+└── SystemParameters.java   // ✅ Parámetros del Sistema
+
+src/biblioteca/domain/enums/
+├── CopyOrigin.java         // ✅ Origen del ejemplar (PURCHASE, DONATION)
+├── CopyState.java          // ✅ Estado del ejemplar (AVAILABLE, LOANED, RESERVED)
+├── MemberType.java         // ✅ Tipo de socio (STANDARD, STUDENT, RETIRED)
+├── LoanState.java          // ✅ Estado préstamo (ACTIVE, RETURNED, OVERDUE)
+├── ReservationState.java   // ✅ Estado reserva (ACTIVE, CANCELLED, FULFILLED)
+└── NotificationChannel.java // ✅ Canal (CONSOLE)
 ```
 
 ### **2. CASOS DE USO (Application Layer)**
@@ -334,6 +342,15 @@ for (int i = 0; i < miembros.size(); i++) {
 
 ### ✅ **COMPLETADO**
 
+**🏗️ ENTIDADES DEL DOMINIO:**
+
+- [x] **Todas las entidades principales** (Author, Book, Category, Copy, Publisher, Member, Loan, Fine, Reservation, Notification, SystemParameters)
+- [x] **Todos los enums** (CopyOrigin, CopyState, MemberType, LoanState, ReservationState, NotificationChannel)
+- [x] **Estructura del dominio reorganizada** (entities/ y enums/ separados correctamente)
+- [x] **Imports y packages actualizados** para la nueva estructura
+
+**📚 MÓDULO DE LIBROS:**
+
 - [x] BookController con patrón de formularios
 - [x] BookController refactorizado completamente para usar forms
 - [x] Use Cases de libros (RegisterBook, AddStock, ModifyBook, DeleteBook)
@@ -342,6 +359,8 @@ for (int i = 0; i < miembros.size(); i++) {
 - [x] Arquitectura Clean Architecture establecida
 - [x] Imports optimizados en BookController
 - [x] **Módulo de Libros 100% completado**
+
+**👥 MÓDULO DE SOCIOS:**
 
 - [x] Entidades Member y MemberType con beneficios por tipo de socio
 - [x] Use Cases de socios (RegisterMember, ModifyMember, QueryMember, PayFine)

@@ -2,6 +2,8 @@ package biblioteca.domain.entities;
 
 import java.util.regex.Pattern;
 
+import biblioteca.domain.enums.MemberType;
+
 /**
  * Domain entity representing a library member
  */

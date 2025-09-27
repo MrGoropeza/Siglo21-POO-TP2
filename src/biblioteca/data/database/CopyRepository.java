@@ -5,8 +5,8 @@ import java.util.List;
 
 import biblioteca.domain.entities.Book;
 import biblioteca.domain.entities.Copy;
-import biblioteca.domain.entities.CopyOrigin;
-import biblioteca.domain.entities.CopyState;
+import biblioteca.domain.enums.CopyOrigin;
+import biblioteca.domain.enums.CopyState;
 
 /**
  * Repository for Copy entities - handles CRUD operations for book copies

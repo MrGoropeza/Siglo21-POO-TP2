@@ -1,6 +1,6 @@
 package biblioteca.application.socios.registrar;
 
-import biblioteca.domain.entities.MemberType;
+import biblioteca.domain.enums.MemberType;
 
 /**
  * Request object for registering a new member

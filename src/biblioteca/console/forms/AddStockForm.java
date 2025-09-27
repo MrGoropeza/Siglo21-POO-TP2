@@ -5,7 +5,7 @@ import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.data.database.BookRepository;
 import biblioteca.domain.entities.Book;
-import biblioteca.domain.entities.CopyOrigin;
+import biblioteca.domain.enums.CopyOrigin;
 
 /**
  * Form for capturing add stock data from console

@@ -7,7 +7,7 @@ import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.domain.entities.Member;
-import biblioteca.domain.entities.MemberType;
+import biblioteca.domain.enums.MemberType;
 
 /**
  * Form for capturing member modification data

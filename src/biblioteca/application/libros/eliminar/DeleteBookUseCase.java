@@ -6,7 +6,7 @@ import biblioteca.data.database.BookRepository;
 import biblioteca.data.database.CopyRepository;
 import biblioteca.domain.entities.Book;
 import biblioteca.domain.entities.Copy;
-import biblioteca.domain.entities.CopyState;
+import biblioteca.domain.enums.CopyState;
 
 /**
  * Use case for deleting a book and its copies

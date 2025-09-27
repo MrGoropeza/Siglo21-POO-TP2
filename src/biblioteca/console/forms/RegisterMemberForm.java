@@ -3,7 +3,7 @@ package biblioteca.console.forms;
 import biblioteca.application.socios.registrar.RegisterMemberRequest;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
-import biblioteca.domain.entities.MemberType;
+import biblioteca.domain.enums.MemberType;
 
 /**
  * Form for capturing member registration data
