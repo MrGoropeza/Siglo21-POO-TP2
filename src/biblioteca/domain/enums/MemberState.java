@@ -1,16 +1,16 @@
 package biblioteca.domain.enums;
 
 /**
- * Estados posibles de un préstamo en el sistema de biblioteca
+ * Estados posibles de un socio en el sistema de biblioteca
  */
-public enum LoanState {
+public enum MemberState {
     ACTIVE("Activo"),
-    RETURNED("Devuelto"),
-    OVERDUE("Vencido");
+    SUSPENDED("Suspendido"),
+    INACTIVE("Inactivo");
 
     private final String displayName;
 
-    LoanState(String displayName) {
+    MemberState(String displayName) {
         this.displayName = displayName;
     }
 

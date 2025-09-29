@@ -1,0 +1,221 @@
+classDiagram
+    %% ============================================
+    %% ENTIDADES DEL DOMINIO
+    %% ============================================
+    
+    class Author {
+        -int id
+        -String name
+        +Author(int, String)
+        +getId() int
+        +getName() String
+        +setId(int)
+        +setName(String)
+    }
+    
+    class Category {
+        -int id
+        -String name
+        +Category(int, String)
+        +getId() int
+        +getName() String
+        +setId(int)
+        +setName(String)
+    }
+    
+    class Publisher {
+        -int id
+        -String name
+        +Publisher(int, String)
+        +getId() int
+        +getName() String
+        +setId(int)
+        +setName(String)
+    }
+    
+    class Book {
+        -int id
+        -String title
+        -Author author
+        -Category category
+        -Publisher publisher
+        -int year
+        +Book(...)
+        +getId() int
+        +getTitle() String
+        +getAuthor() Author
+        +getCategory() Category
+        +getPublisher() Publisher
+        +getYear() int
+    }
+    
+    class Copy {
+        -String code
+        -CopyState state
+        -CopyOrigin origin
+        -Book book
+        +Copy(...)
+        +isAvailable() boolean
+        +markAsLoaned()
+        +markAsAvailable()
+        +markAsReserved()
+    }
+    
+    class Member {
+        -String id
+        -String name
+        -String email
+        -String phone
+        -MemberType type
+        -MemberState state
+        -double pendingFines
+        +Member(...)
+        +getId() String
+        +getType() MemberType
+        +isValidEmail() boolean
+        +hasPendingFines() boolean
+        +canRequestLoan(int, int) boolean
+        +calculateFineAmount(double) double
+        +calculateLoanPeriod(int) int
+    }
+    
+    class Loan {
+        -String id
+        -Member member
+        -Copy copy
+        -LocalDate loanDate
+        -LocalDate dueDate
+        -LocalDate returnDate
+        -LoanState state
+        +Loan(...)
+        +getId() String
+        +getMember() Member
+        +getCopy() Copy
+        +getDueDate() LocalDate
+        +setState(LoanState)
+    }
+    
+    class Fine {
+        -String id
+        -Member member
+        -double amount
+        -boolean paid
+        -LocalDate issueDate
+        -LocalDate paidDate
+        +Fine(...)
+        +getMember() Member
+        +isPaid() boolean
+        +pay(LocalDate)
+    }
+    
+    class Reservation {
+        -String id
+        -Member member
+        -Book book
+        -LocalDate reservationDate
+        -ReservationState state
+        +Reservation(...)
+        +getMember() Member
+        +getBook() Book
+        +setState(ReservationState)
+    }
+    
+    class Notification {
+        -String id
+        -Member member
+        -String message
+        -NotificationChannel channel
+        -LocalDateTime sentAt
+        +Notification(...)
+        +getMember() Member
+        +getMessage() String
+    }
+    
+    class SystemParameters {
+        -int maxLoansPerMember
+        -int loanDays
+        -double finePerDay
+        +SystemParameters(...)
+        +getMaxLoansPerMember() int
+        +getLoanDays() int
+        +getFinePerDay() double
+    }
+    
+    %% ============================================
+    %% ENUMERACIONES
+    %% ============================================
+    
+    class CopyOrigin {
+        <<enumeration>>
+        PURCHASE
+        DONATION
+        +getDisplayName() String
+    }
+    
+    class CopyState {
+        <<enumeration>>
+        AVAILABLE
+        LOANED
+        RESERVED
+        +getDisplayName() String
+    }
+    
+    class MemberType {
+        <<enumeration>>
+        STANDARD
+        STUDENT
+        RETIRED
+        +getDisplayName() String
+        +getFineDiscountPercentage() double
+        +getExtraLoanDays() int
+        +calculateLoanDays(int) int
+    }
+    
+    class MemberState {
+        <<enumeration>>
+        ACTIVE
+        SUSPENDED
+        INACTIVE
+        +getDisplayName() String
+    }
+    
+    class LoanState {
+        <<enumeration>>
+        ACTIVE
+        RETURNED
+        OVERDUE
+    }
+    
+    class ReservationState {
+        <<enumeration>>
+        ACTIVE
+        CANCELLED
+        FULFILLED
+    }
+    
+    class NotificationChannel {
+        <<enumeration>>
+        CONSOLE
+    }
+    
+    %% ============================================
+    %% RELACIONES
+    %% ============================================
+    
+    Book --> Category : "pertenece a"
+    Book --> Author : "escrito por"
+    Book --> Publisher : "publicado por"
+    Copy --> Book : "es ejemplar de"
+    Copy --> CopyOrigin : "tiene origen"
+    Copy --> CopyState : "tiene estado"
+    Member --> MemberType : "es de tipo"
+    Member --> MemberState : "tiene estado"
+    Loan --> Member : "prestado a"
+    Loan --> Copy : "incluye"
+    Loan --> LoanState : "tiene estado"
+    Fine --> Member : "multa de"
+    Reservation --> Member : "reserva de"
+    Reservation --> Book : "reserva para"
+    Reservation --> ReservationState : "tiene estado"
+    Notification --> Member : "notifica a"
+    Notification --> NotificationChannel : "por canal"

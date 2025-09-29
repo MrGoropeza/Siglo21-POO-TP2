@@ -6,14 +6,14 @@ import biblioteca.domain.enums.NotificationChannel;
 
 public class Notification {
     private String id;
-    private String memberId;
+    private Member member;
     private String message;
     private NotificationChannel channel;
     private LocalDateTime sentAt;
 
-    public Notification(String id, String memberId, String message, NotificationChannel channel, LocalDateTime sentAt) {
+    public Notification(String id, Member member, String message, NotificationChannel channel, LocalDateTime sentAt) {
         this.id = id;
-        this.memberId = memberId;
+        this.member = member;
         this.message = message;
         this.channel = channel;
         this.sentAt = sentAt;
@@ -23,8 +23,8 @@ public class Notification {
         return id;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
     public String getMessage() {

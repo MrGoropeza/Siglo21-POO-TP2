@@ -45,6 +45,8 @@ public class MemberRepository {
             existingMember.setEmail(member.getEmail());
             existingMember.setPhone(member.getPhone());
             existingMember.setType(member.getType());
+            existingMember.setState(member.getState());
+            existingMember.setPendingFines(member.getPendingFines());
             return existingMember;
         }
         return null;

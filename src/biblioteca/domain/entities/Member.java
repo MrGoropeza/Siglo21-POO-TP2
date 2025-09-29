@@ -2,6 +2,7 @@ package biblioteca.domain.entities;
 
 import java.util.regex.Pattern;
 
+import biblioteca.domain.enums.MemberState;
 import biblioteca.domain.enums.MemberType;
 
 /**
@@ -16,6 +17,8 @@ public class Member {
     private String email;
     private String phone;
     private MemberType type;
+    private MemberState state;
+    private double pendingFines;
 
     public Member() {
     }
@@ -26,6 +29,8 @@ public class Member {
         this.email = email;
         this.phone = phone;
         this.type = type;
+        this.state = MemberState.ACTIVE; // Estado por defecto
+        this.pendingFines = 0.0;
     }
 
     // Getters and Setters
@@ -69,6 +74,22 @@ public class Member {
         this.type = type;
     }
 
+    public MemberState getState() {
+        return state;
+    }
+
+    public void setState(MemberState state) {
+        this.state = state;
+    }
+
+    public double getPendingFines() {
+        return pendingFines;
+    }
+
+    public void setPendingFines(double pendingFines) {
+        this.pendingFines = pendingFines;
+    }
+
     // Business methods
     /**
      * Validates if the member's email has a valid format
@@ -77,6 +98,15 @@ public class Member {
      */
     public boolean isValidEmail() {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
+    }
+
+    /**
+     * Checks if the member has pending fines
+     * 
+     * @return true if member has pending fines
+     */
+    public boolean hasPendingFines() {
+        return pendingFines > 0;
     }
 
     /**
@@ -123,8 +153,10 @@ public class Member {
                         "Nombre: %s%n" +
                         "Email: %s%n" +
                         "Teléfono: %s%n" +
-                        "Categoría: %s",
-                id, name, email, phone, type.getDisplayName());
+                        "Categoría: %s%n" +
+                        "Estado: %s%n" +
+                        "Multas pendientes: $%.2f",
+                id, name, email, phone, type.getDisplayName(), state.getDisplayName(), pendingFines);
     }
 
     @Override

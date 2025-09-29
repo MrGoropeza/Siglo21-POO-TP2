@@ -6,32 +6,37 @@ import biblioteca.domain.enums.LoanState;
 
 public class Loan {
     private String id;
-    private String memberId;
-    private String bookId;
+    private Member member;
+    private Copy copy;
     private LocalDate loanDate;
     private LocalDate dueDate;
     private LocalDate returnDate;
     private LoanState state;
 
-    public Loan(String id, String memberId, String bookId, LocalDate loanDate, LocalDate dueDate, LoanState state) {
+    public Loan(String id, Member member, Copy copy, LocalDate loanDate, LocalDate dueDate, LoanState state) {
         this.id = id;
-        this.memberId = memberId;
-        this.bookId = bookId;
+        this.member = member;
+        this.copy = copy;
         this.loanDate = loanDate;
         this.dueDate = dueDate;
         this.state = state;
+    }
+
+    // Constructor simplificado que inicializa con estado ACTIVE
+    public Loan(String id, Member member, Copy copy, LocalDate loanDate, LocalDate dueDate) {
+        this(id, member, copy, loanDate, dueDate, LoanState.ACTIVE);
     }
 
     public String getId() {
         return id;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public String getBookId() {
-        return bookId;
+    public Copy getCopy() {
+        return copy;
     }
 
     public LocalDate getLoanDate() {

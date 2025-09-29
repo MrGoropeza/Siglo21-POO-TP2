@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biblioteca.domain.entities.Member;
+import biblioteca.domain.enums.MemberState;
 import biblioteca.domain.enums.MemberType;
 
 /**
@@ -21,11 +22,20 @@ public class MemberDummyData {
                 List<Member> members = new ArrayList<>();
 
                 // Socios estándar
-                members.add(new Member("1001", "Juan Pérez", "juan.perez@email.com", "555-0101", MemberType.STANDARD));
-                members.add(new Member("1002", "María García", "maria.garcia@email.com", "555-0102",
-                                MemberType.STANDARD));
-                members.add(new Member("1003", "Carlos López", "carlos.lopez@email.com", "555-0103",
-                                MemberType.STANDARD));
+                Member member1 = new Member("1001", "Juan Pérez", "juan.perez@email.com", "555-0101",
+                                MemberType.STANDARD);
+                members.add(member1);
+
+                Member member2 = new Member("1002", "María García", "maria.garcia@email.com", "555-0102",
+                                MemberType.STANDARD);
+                member2.setPendingFines(25.50); // Tiene multas pendientes
+                members.add(member2);
+
+                Member member3 = new Member("1003", "Carlos López", "carlos.lopez@email.com", "555-0103",
+                                MemberType.STANDARD);
+                member3.setState(MemberState.SUSPENDED); // Socio suspendido
+                members.add(member3);
+
                 members.add(new Member("1004", "Pedro Sánchez", "pedro.sanchez@email.com", "555-0104",
                                 MemberType.STANDARD));
                 members.add(new Member("1005", "Laura Jiménez", "laura.jimenez@email.com", "555-0105",

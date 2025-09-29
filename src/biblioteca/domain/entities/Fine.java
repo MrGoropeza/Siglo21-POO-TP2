@@ -4,15 +4,15 @@ import java.time.LocalDate;
 
 public class Fine {
     private String id;
-    private String memberId;
+    private Member member;
     private double amount;
     private boolean paid;
     private LocalDate issueDate;
     private LocalDate paidDate;
 
-    public Fine(String id, String memberId, double amount, LocalDate issueDate) {
+    public Fine(String id, Member member, double amount, LocalDate issueDate) {
         this.id = id;
-        this.memberId = memberId;
+        this.member = member;
         this.amount = amount;
         this.issueDate = issueDate;
         this.paid = false;
@@ -22,8 +22,8 @@ public class Fine {
         return id;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
     public double getAmount() {

@@ -11,6 +11,10 @@ import biblioteca.application.socios.registrar.RegisterMemberUseCase;
 import biblioteca.console.controllers.BookController;
 import biblioteca.console.controllers.MainController;
 import biblioteca.console.controllers.MemberController;
+import biblioteca.console.controllers.LoanController;
+import biblioteca.application.prestamos.create.CreateLoanUseCase;
+import biblioteca.console.forms.prestamos.LoanCartForm;
+import biblioteca.data.LoanRepository;
 import biblioteca.console.forms.AddStockForm;
 import biblioteca.console.forms.DeleteBookForm;
 import biblioteca.console.forms.FindBookForm;
@@ -29,6 +33,8 @@ import biblioteca.data.database.PublisherRepository;
 import biblioteca.data.dummy.AuthorDummyData;
 import biblioteca.data.dummy.BookDummyData;
 import biblioteca.data.dummy.CategoryDummyData;
+import biblioteca.data.dummy.CopyDummyData;
+import biblioteca.data.dummy.LoanDummyData;
 import biblioteca.data.dummy.PublisherDummyData;
 
 /**
@@ -42,6 +48,7 @@ public class DependencyContainer {
     private PublisherRepository publisherRepository;
     private CopyRepository copyRepository;
     private MemberRepository memberRepository;
+    private LoanRepository loanRepository;
 
     private RegisterBookUseCase registerBookUseCase;
     private AddStockUseCase addStockUseCase;
@@ -51,6 +58,7 @@ public class DependencyContainer {
     private ModifyMemberUseCase modifyMemberUseCase;
     private QueryMemberUseCase queryMemberUseCase;
     private PayFineUseCase payFineUseCase;
+    private CreateLoanUseCase createLoanUseCase;
 
     private RegisterBookForm registerBookForm;
     private AddStockForm addStockForm;
@@ -61,9 +69,11 @@ public class DependencyContainer {
     private ModifyMemberForm modifyMemberForm;
     private FindMemberForm findMemberForm;
     private PayFineForm payFineForm;
+    private LoanCartForm loanCartForm;
 
     private BookController bookController;
     private MemberController memberController;
+    private LoanController loanController;
     private MainController mainController;
 
     /**
@@ -180,22 +190,49 @@ public class DependencyContainer {
         return mainController;
     }
 
+    public LoanRepository getLoanRepository() {
+        return loanRepository;
+    }
+
+    public CreateLoanUseCase getCreateLoanUseCase() {
+        return createLoanUseCase;
+    }
+
+    public LoanCartForm getLoanCartForm() {
+        return loanCartForm;
+    }
+
+    public LoanController getLoanController() {
+        return loanController;
+    }
+
     private void initializeRepositories() {
         bookRepository = new BookRepository();
         authorRepository = new AuthorRepository();
         categoryRepository = new CategoryRepository();
         publisherRepository = new PublisherRepository();
         copyRepository = new CopyRepository();
-        memberRepository = new MemberRepository();
+        memberRepository = new MemberRepository(); // Ya carga MemberDummyData en constructor
+        loanRepository = new LoanRepository(); // Se cargarán datos dummy después
 
+        // Cargar datos dummy de repositorios base
         authorRepository.loadDummyData(AuthorDummyData.getAuthors());
         categoryRepository.loadDummyData(CategoryDummyData.getCategories());
         publisherRepository.loadDummyData(PublisherDummyData.getPublishers());
 
+        // Cargar datos dummy que dependen de otros repositorios
         bookRepository.loadDummyData(BookDummyData.getBooks(
                 authorRepository.findAll(),
                 categoryRepository.findAll(),
                 publisherRepository.findAll()));
+
+        // Cargar datos dummy de ejemplares (depende de que los libros estén cargados)
+        copyRepository.loadDummyData(CopyDummyData.getCopies(bookRepository.findAll()));
+
+        // Cargar datos dummy de préstamos (depende de miembros y ejemplares)
+        loanRepository.loadDummyData(LoanDummyData.getLoans(
+                memberRepository.findAll(),
+                copyRepository.findAll()));
     }
 
     private void initializeUseCases() {
@@ -218,8 +255,9 @@ public class DependencyContainer {
 
         registerMemberUseCase = new RegisterMemberUseCase(memberRepository);
         modifyMemberUseCase = new ModifyMemberUseCase(memberRepository);
-        queryMemberUseCase = new QueryMemberUseCase(memberRepository);
+        queryMemberUseCase = new QueryMemberUseCase(memberRepository, loanRepository);
         payFineUseCase = new PayFineUseCase(memberRepository);
+        createLoanUseCase = new CreateLoanUseCase(memberRepository, loanRepository, copyRepository);
     }
 
     private void initializeForms() {
@@ -247,6 +285,7 @@ public class DependencyContainer {
 
         findMemberForm = new FindMemberForm(memberRepository, queryMemberUseCase);
         payFineForm = new PayFineForm(payFineUseCase, memberRepository);
+        loanCartForm = new LoanCartForm(createLoanUseCase, copyRepository, memberRepository);
     }
 
     private void initializeControllers() {
@@ -270,9 +309,16 @@ public class DependencyContainer {
                 findMemberForm,
                 payFineForm);
 
+        loanController = new LoanController(
+                createLoanUseCase,
+                loanRepository,
+                memberRepository,
+                copyRepository);
+
         mainController = new MainController(
                 bookController,
                 memberController,
+                loanController,
                 bookRepository,
                 authorRepository,
                 categoryRepository,

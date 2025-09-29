@@ -7,6 +7,7 @@ import biblioteca.data.database.BookRepository;
 import biblioteca.data.database.CategoryRepository;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.data.database.PublisherRepository;
+import biblioteca.console.controllers.LoanController;
 
 /**
  * Main controller for handling the primary application menu
@@ -14,6 +15,7 @@ import biblioteca.data.database.PublisherRepository;
 public class MainController {
     private final BookController bookController;
     private final MemberController memberController;
+    private final LoanController loanController;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
@@ -22,6 +24,7 @@ public class MainController {
 
     public MainController(BookController bookController,
             MemberController memberController,
+            LoanController loanController,
             BookRepository bookRepository,
             AuthorRepository authorRepository,
             CategoryRepository categoryRepository,
@@ -29,6 +32,7 @@ public class MainController {
             MemberRepository memberRepository) {
         this.bookController = bookController;
         this.memberController = memberController;
+        this.loanController = loanController;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
@@ -49,16 +53,18 @@ public class MainController {
 
                 System.out.println("1. Gestión de Libros");
                 System.out.println("2. Gestión de Socios");
-                System.out.println("3. Ver estadísticas del sistema");
-                System.out.println("4. Salir");
+                System.out.println("3. Gestión de Préstamos");
+                System.out.println("4. Ver estadísticas del sistema");
+                System.out.println("5. Salir");
 
-                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 4);
+                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 5);
 
                 switch (opcion) {
                     case 1 -> bookController.showMenu();
                     case 2 -> memberController.showMenu();
-                    case 3 -> showSystemStats();
-                    case 4 -> {
+                    case 3 -> loanController.showMainMenu();
+                    case 4 -> showSystemStats();
+                    case 5 -> {
                         if (InputHelper.confirmar("¿Está seguro que desea salir?")) {
                             continuar = false;
                             DisplayHelper.printSuccess("¡Gracias por usar el sistema de biblioteca!");

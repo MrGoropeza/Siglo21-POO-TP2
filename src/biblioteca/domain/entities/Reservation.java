@@ -6,15 +6,15 @@ import biblioteca.domain.enums.ReservationState;
 
 public class Reservation {
     private String id;
-    private String memberId;
-    private String bookId;
+    private Member member;
+    private Book book;
     private LocalDate reservationDate;
     private ReservationState state;
 
-    public Reservation(String id, String memberId, String bookId, LocalDate reservationDate, ReservationState state) {
+    public Reservation(String id, Member member, Book book, LocalDate reservationDate, ReservationState state) {
         this.id = id;
-        this.memberId = memberId;
-        this.bookId = bookId;
+        this.member = member;
+        this.book = book;
         this.reservationDate = reservationDate;
         this.state = state;
     }
@@ -23,12 +23,12 @@ public class Reservation {
         return id;
     }
 
-    public String getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public String getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
     public LocalDate getReservationDate() {
