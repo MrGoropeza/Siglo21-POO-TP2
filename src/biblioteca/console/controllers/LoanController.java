@@ -8,7 +8,7 @@ import biblioteca.console.forms.prestamos.LoanCartForm;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.console.utils.MemberSearchHelper;
-import biblioteca.data.LoanRepository;
+import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.CopyRepository;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.domain.entities.Loan;

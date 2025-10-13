@@ -1,5 +1,7 @@
 package biblioteca.console.controllers;
 
+import biblioteca.console.configuracion.ConfigController;
+import biblioteca.console.devoluciones.ReturnController;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.data.database.AuthorRepository;
@@ -7,7 +9,6 @@ import biblioteca.data.database.BookRepository;
 import biblioteca.data.database.CategoryRepository;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.data.database.PublisherRepository;
-import biblioteca.console.controllers.LoanController;
 
 /**
  * Main controller for handling the primary application menu
@@ -16,6 +17,8 @@ public class MainController {
     private final BookController bookController;
     private final MemberController memberController;
     private final LoanController loanController;
+    private final ReturnController returnController;
+    private final ConfigController configController;
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
@@ -25,6 +28,8 @@ public class MainController {
     public MainController(BookController bookController,
             MemberController memberController,
             LoanController loanController,
+            ReturnController returnController,
+            ConfigController configController,
             BookRepository bookRepository,
             AuthorRepository authorRepository,
             CategoryRepository categoryRepository,
@@ -33,6 +38,8 @@ public class MainController {
         this.bookController = bookController;
         this.memberController = memberController;
         this.loanController = loanController;
+        this.returnController = returnController;
+        this.configController = configController;
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
         this.categoryRepository = categoryRepository;
@@ -54,17 +61,21 @@ public class MainController {
                 System.out.println("1. Gestión de Libros");
                 System.out.println("2. Gestión de Socios");
                 System.out.println("3. Gestión de Préstamos");
-                System.out.println("4. Ver estadísticas del sistema");
-                System.out.println("5. Salir");
+                System.out.println("4. Gestión de Devoluciones");
+                System.out.println("5. Configuración del Sistema");
+                System.out.println("6. Ver estadísticas del sistema");
+                System.out.println("7. Salir");
 
-                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 5);
+                int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción", 1, 7);
 
                 switch (opcion) {
                     case 1 -> bookController.showMenu();
                     case 2 -> memberController.showMenu();
                     case 3 -> loanController.showMainMenu();
-                    case 4 -> showSystemStats();
-                    case 5 -> {
+                    case 4 -> returnController.showMenu();
+                    case 5 -> configController.run();
+                    case 6 -> showSystemStats();
+                    case 7 -> {
                         if (InputHelper.confirmar("¿Está seguro que desea salir?")) {
                             continuar = false;
                             DisplayHelper.printSuccess("¡Gracias por usar el sistema de biblioteca!");

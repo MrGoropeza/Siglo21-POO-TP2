@@ -9,6 +9,10 @@ public class PayFineResult {
         return new PayFineResult(true, message, finesPaid, totalAmount);
     }
 
+    public static PayFineResult partialSuccess(int finesPaid, double totalAmount, String message) {
+        return new PayFineResult(true, message, finesPaid, totalAmount);
+    }
+
     public static PayFineResult failure(String message) {
         return new PayFineResult(false, message, 0, 0.0);
     }

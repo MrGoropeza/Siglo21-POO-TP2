@@ -1,5 +1,10 @@
 package biblioteca.application.socios.consultar;
 
+import java.util.Collections;
+import java.util.List;
+
+import biblioteca.application.socios.consultar.QueryMemberResult.MemberSummary;
+import biblioteca.domain.entities.Loan;
 import biblioteca.domain.entities.Member;
 
 /**
@@ -44,11 +49,15 @@ public class QueryMemberResult {
     }
 
     public static QueryMemberResult success(Member member, MemberSummary summary) {
-        return new QueryMemberResult(true, "Consulta realizada exitosamente", member, summary);
+        return new QueryMemberResult(true, "Consulta realizada exitosamente", member, summary, Collections.emptyList());
+    }
+
+    public static QueryMemberResult success(Member member, MemberSummary summary, List<Loan> recentReturns) {
+        return new QueryMemberResult(true, "Consulta realizada exitosamente", member, summary, recentReturns);
     }
 
     public static QueryMemberResult failure(String message) {
-        return new QueryMemberResult(false, message, null, null);
+        return new QueryMemberResult(false, message, null, null, Collections.emptyList());
     }
 
     private final boolean success;
@@ -59,11 +68,15 @@ public class QueryMemberResult {
 
     private final MemberSummary summary;
 
-    private QueryMemberResult(boolean success, String message, Member member, MemberSummary summary) {
+    private final List<Loan> recentReturns;
+
+    private QueryMemberResult(boolean success, String message, Member member, MemberSummary summary,
+            List<Loan> recentReturns) {
         this.success = success;
         this.message = message;
         this.member = member;
         this.summary = summary;
+        this.recentReturns = recentReturns != null ? recentReturns : Collections.emptyList();
     }
 
     public boolean isSuccess() {
@@ -80,5 +93,13 @@ public class QueryMemberResult {
 
     public MemberSummary getSummary() {
         return summary;
+    }
+
+    public List<Loan> getRecentReturns() {
+        return recentReturns;
+    }
+
+    public boolean hasRecentReturns() {
+        return recentReturns != null && !recentReturns.isEmpty();
     }
 }

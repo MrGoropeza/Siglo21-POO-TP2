@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import biblioteca.application.prestamos.carrito.LoanCart;
-import biblioteca.data.LoanRepository;
+import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.CopyRepository;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.domain.entities.Copy;

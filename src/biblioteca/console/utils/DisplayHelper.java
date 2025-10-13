@@ -1,5 +1,7 @@
 package biblioteca.console.utils;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -7,17 +9,19 @@ import java.util.List;
  */
 public class DisplayHelper {
 
+    public static final String SEPARATOR = "=".repeat(60);
+
     /**
      * Clears the console screen
      */
     public static void clearScreen() {
-        try {
-            new ProcessBuilder("clear").inheritIO().start().waitFor();
-        } catch (Exception e) {
-            for (int i = 0; i < 50; i++) {
-                System.out.println();
-            }
-        }
+        // try {
+        // new ProcessBuilder("clear").inheritIO().start().waitFor();
+        // } catch (Exception e) {
+        // for (int i = 0; i < 50; i++) {
+        // System.out.println();
+        // }
+        // }
     }
 
     /**
@@ -169,6 +173,16 @@ public class DisplayHelper {
             System.out.printf("| %-" + (ancho - 4) + "s |\n", mensaje);
         }
         System.out.println(lineaHorizontal);
+    }
+
+    /**
+     * Formats a LocalDate to a readable string (dd/MM/yyyy)
+     */
+    public static String formatDate(LocalDate date) {
+        if (date == null) {
+            return "N/A";
+        }
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     private static void renderTableRow(String[] columnas, int[] anchos) {

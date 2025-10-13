@@ -8,7 +8,9 @@ import biblioteca.application.socios.consultar.QueryMemberUseCase;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.data.database.MemberRepository;
+import biblioteca.data.database.SystemParametersRepository;
 import biblioteca.domain.entities.Member;
+import biblioteca.domain.entities.SystemParameters;
 
 /**
  * Form for finding/searching members by different criteria
@@ -18,10 +20,13 @@ import biblioteca.domain.entities.Member;
 public class FindMemberForm {
     private final MemberRepository memberRepository;
     private final QueryMemberUseCase queryMemberUseCase;
+    private final SystemParametersRepository systemParametersRepository;
 
-    public FindMemberForm(MemberRepository memberRepository, QueryMemberUseCase queryMemberUseCase) {
+    public FindMemberForm(MemberRepository memberRepository, QueryMemberUseCase queryMemberUseCase,
+            SystemParametersRepository systemParametersRepository) {
         this.memberRepository = memberRepository;
         this.queryMemberUseCase = queryMemberUseCase;
+        this.systemParametersRepository = systemParametersRepository;
     }
 
     /**
@@ -157,13 +162,8 @@ public class FindMemberForm {
                 DisplayHelper.renderSubtitle("INFORMACIÓN DETALLADA");
                 System.out.println(member.toDetailedString());
 
-                // Show member type benefits
-                System.out.println();
-                DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
-                System.out.println("Categoría: " + member.getType().getDisplayName());
-                System.out.println(
-                        "Descuento en multas: " + (int) (member.getType().getFineDiscountPercentage() * 100) + "%");
-                System.out.println("Extensión de préstamo: +" + member.getType().getExtraLoanDays() + " días");
+                // Show member type benefits with system parameters
+                displayMemberBenefits(member);
 
                 System.out.println();
                 DisplayHelper.printWarning("Nota: No se pudo obtener el resumen de actividad completo.");
@@ -202,14 +202,8 @@ public class FindMemberForm {
                 DisplayHelper.renderSubtitle("INFORMACIÓN DETALLADA");
                 System.out.println(selectedMember.toDetailedString());
 
-                // Show member type benefits
-                System.out.println();
-                DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
-                System.out.println("Categoría: " + selectedMember.getType().getDisplayName());
-                System.out.println(
-                        "Descuento en multas: " + (int) (selectedMember.getType().getFineDiscountPercentage() * 100)
-                                + "%");
-                System.out.println("Extensión de préstamo: +" + selectedMember.getType().getExtraLoanDays() + " días");
+                // Show member type benefits with system parameters
+                displayMemberBenefits(selectedMember);
 
                 System.out.println();
                 DisplayHelper.printWarning("Nota: No se pudo obtener el resumen de actividad completo.");
@@ -262,12 +256,77 @@ public class FindMemberForm {
             DisplayHelper.printInfo("📚 El socio tiene " + summary.getActiveLoans() + " préstamo(s) activo(s)");
         }
 
-        // Display member benefits
+        // Display member benefits with system parameters
+        displayMemberBenefits(result.getMember());
+
+        // Display recent returns
+        if (result.hasRecentReturns()) {
+            System.out.println();
+            DisplayHelper.renderSubtitle("DEVOLUCIONES RECIENTES");
+
+            for (int i = 0; i < result.getRecentReturns().size(); i++) {
+                var loan = result.getRecentReturns().get(i);
+                System.out.println((i + 1) + ". " + loan.getCopy().getBook().getTitle());
+                System.out.println("   Ejemplar: " + loan.getCopy().getCode());
+                System.out.println("   Fecha devolución: " + DisplayHelper.formatDate(loan.getReturnDate()));
+
+                // Check if it was late
+                if (loan.getReturnDate() != null && loan.getReturnDate().isAfter(loan.getDueDate())) {
+                    long daysLate = java.time.temporal.ChronoUnit.DAYS.between(
+                            loan.getDueDate(),
+                            loan.getReturnDate());
+                    System.out.println("   ⚠️  Devolución con " + daysLate + " día(s) de retraso");
+                } else {
+                    System.out.println("   ✓ Devolución a tiempo");
+                }
+                System.out.println();
+            }
+        }
+    }
+
+    /**
+     * Displays member benefits based on member type and system parameters
+     * Shows dynamic information: loan days, max loans, fine discount
+     * 
+     * @param member The member to display benefits for
+     */
+    private void displayMemberBenefits(Member member) {
         System.out.println();
         DisplayHelper.renderSubtitle("BENEFICIOS DE CATEGORÍA");
-        System.out.println("Categoría: " + result.getMember().getType().getDisplayName());
-        System.out.println(
-                "Descuento en multas: " + (int) (result.getMember().getType().getFineDiscountPercentage() * 100) + "%");
-        System.out.println("Extensión de préstamo: +" + result.getMember().getType().getExtraLoanDays() + " días");
+
+        // Get system parameters
+        SystemParameters params = systemParametersRepository.get();
+
+        // Display member type
+        System.out.println("Categoría: " + member.getType().getDisplayName());
+
+        // Calculate and display loan duration
+        int baseLoanDays = params.getLoanDays();
+        int extraDays = member.getType().getExtraLoanDays();
+        int totalLoanDays = baseLoanDays + extraDays;
+
+        System.out.printf("📅 Duración de préstamos: %d días", totalLoanDays);
+        if (extraDays > 0) {
+            System.out.printf(" (%d días base + %d días extra)%n", baseLoanDays, extraDays);
+        } else {
+            System.out.println(" (estándar)");
+        }
+
+        // Display max loans allowed
+        System.out.printf("�� Límite de préstamos simultáneos: %d libro(s)%n", params.getMaxLoansPerMember());
+
+        // Display fine discount
+        double discountPercentage = member.getType().getFineDiscountPercentage() * 100;
+        System.out.printf("💰 Descuento en multas: %.0f%%%n", discountPercentage);
+
+        // Show fine calculation example
+        double baseFine = params.getFinePerDay();
+        double discountedFine = baseFine * (1 - member.getType().getFineDiscountPercentage());
+
+        if (discountPercentage > 0) {
+            System.out.printf("   Ejemplo: $%.2f por día (en lugar de $%.2f)%n", discountedFine, baseFine);
+        } else {
+            System.out.printf("   Tarifa: $%.2f por día de retraso%n", baseFine);
+        }
     }
 }

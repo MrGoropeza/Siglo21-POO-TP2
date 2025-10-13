@@ -1,25 +1,31 @@
 package biblioteca.application.socios.consultar;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import biblioteca.data.LoanRepository;
+import biblioteca.data.database.FineRepository;
+import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.MemberRepository;
+import biblioteca.domain.entities.Fine;
 import biblioteca.domain.entities.Loan;
 import biblioteca.domain.entities.Member;
 import biblioteca.domain.enums.LoanState;
 
 /**
  * Use case for querying comprehensive member information
- * Includes real loan data from LoanRepository.
+ * Includes real loan and fine data from repositories.
  */
 public class QueryMemberUseCase {
     private final MemberRepository memberRepository;
     private final LoanRepository loanRepository;
-    // TODO: Add FineRepository when implemented
+    private final FineRepository fineRepository;
 
-    public QueryMemberUseCase(MemberRepository memberRepository, LoanRepository loanRepository) {
+    public QueryMemberUseCase(MemberRepository memberRepository, LoanRepository loanRepository,
+            FineRepository fineRepository) {
         this.memberRepository = memberRepository;
         this.loanRepository = loanRepository;
+        this.fineRepository = fineRepository;
     }
 
     public QueryMemberResult execute(QueryMemberRequest request) {
@@ -41,16 +47,28 @@ public class QueryMemberUseCase {
                     .filter(loan -> loan.getState() == LoanState.ACTIVE)
                     .count();
 
-            // Create summary with real loan data
-            // TODO: Replace fine data with real data from FineRepository when implemented
+            // Get fine data from FineRepository
+            List<Fine> unpaidFines = fineRepository.findUnpaidByMember(member);
+            int totalUnpaidFines = unpaidFines.size();
+            double totalUnpaidAmount = fineRepository.getTotalUnpaidAmount(member);
+
+            // Get recent returns (last 5)
+            List<Loan> recentReturns = memberLoans.stream()
+                    .filter(loan -> loan.getState() == LoanState.RETURNED)
+                    .sorted(Comparator.comparing(Loan::getReturnDate).reversed())
+                    .limit(5)
+                    .collect(Collectors.toList());
+
+            // Create summary with real loan and fine data
             QueryMemberResult.MemberSummary summary = new QueryMemberResult.MemberSummary(
-                    (int) activeLoans, // activeLoans - now using real data
-                    0, // totalUnpaidFines - will be calculated from FineRepository
-                    member.getPendingFines(), // totalUnpaidAmount - using member's pending fines
-                    0 // activeReservations - will be calculated from ReservationRepository
+                    (int) activeLoans, // activeLoans - from LoanRepository
+                    totalUnpaidFines, // totalUnpaidFines - from FineRepository
+                    totalUnpaidAmount, // totalUnpaidAmount - from FineRepository
+                    0 // activeReservations - will be calculated from ReservationRepository when
+                      // implemented
             );
 
-            return QueryMemberResult.success(member, summary);
+            return QueryMemberResult.success(member, summary, recentReturns);
 
         } catch (Exception e) {
             return QueryMemberResult.failure("Error interno al consultar el socio: " + e.getMessage());

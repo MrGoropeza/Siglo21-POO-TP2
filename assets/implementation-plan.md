@@ -2,151 +2,215 @@
 
 ## 🎯 **NUEVAS OPCIONES DE MENÚ**
 
-Según los requisitos, el menú principal sería:
+Según el plan replanteado, el menú principal sería:
 
 ```
 ============================================================
               SISTEMA DE GESTIÓN DE BIBLIOTECA
 ============================================================
 
-1. Libros
-2. Socios
-3. Préstamos
-4. Devoluciones
-5. Reservas
-6. Consultas
-7. Reportes
-8. Configuración
-9. Salir
+1. Gestión de Libros
+2. Gestión de Socios
+3. Gestión de Préstamos
+4. Gestión de Devoluciones
+5. Configuración del Sistema
+6. Reportes y Estadísticas
+7. Salir
 ```
 
 ## 📁 **ARCHIVOS A CREAR**
 
-### **1. ENTIDADES DEL DOMINIO (Domain Layer)** ✅ **COMPLETADO**
+### **1. ENTIDADES DEL DOMINIO (Domain Layer)** ✅ **C**📊 Estado inicial del socio: 1 préstamo activo
+
+✅ Préstamo creado exitosamente
+📊 Estado final del socio: 2 préstamos activos
+🎉 ¡ÉXITO! Sincronización correcta
 
 ```
+
+**🔄 MÓDULO DE DEVOLUCIONES:** ✅ **COMPLETADO**
+
+- [x] **Entidades y estructura**: Fine con estado de pago, fechas y relación con Member
+- [x] **Casos de uso implementados**:
+  - RegisterReturnUseCase con cálculo automático de multas
+  - QueryReturnsUseCase con 6 tipos de filtros diferentes
+- [x] **Formularios completos**:
+  - RegisterReturnForm con preview de multa antes de confirmar
+  - QueryReturnsForm con 7 opciones de consulta y display mejorado
+- [x] **Integración con MainController**: Opción "4. Gestión de Devoluciones" completamente funcional
+- [x] **Repositorios**: FineRepository y SystemParametersRepository
+- [x] **Datos dummy**: FineDummyData con 4 multas de prueba (pagadas y pendientes)
+- [x] **Características avanzadas**:
+  - Cálculo de multas: $5/día × días de retraso × descuento por tipo de socio
+  - Descuentos: 50% estudiantes, 50% jubilados
+  - Preview completo antes de confirmar devolución
+  - Filtros de búsqueda: todos, por socio, por libro, por fecha, con/sin multa
+- [x] **Actualización de estados**: LoanState.ACTIVE → LoanState.RETURNED, CopyState.LOANED → CopyState.AVAILABLE
+- [x] **Integración con otros módulos**:
+  - PayFineUseCase actualizado para pagos reales
+  - QueryMemberUseCase muestra multas pendientes y últimas 5 devoluciones
+  - FindMemberForm incluye sección "DEVOLUCIONES RECIENTES"
+- [x] **✅ MÓDULO 100% COMPLETADO Y VERIFICADO**
+
+**🔧 FUNCIONALIDAD IMPLEMENTADA Y VERIFICADA:**
+
+**Módulo de Devoluciones 100% funcional:**
+- ✅ Registrar devoluciones con cálculo automático de multas por retraso
+- ✅ Preview de multa antes de confirmar (muestra días de retraso, monto, descuentos)
+- ✅ Aplicación de descuentos según tipo de socio (50% estudiantes/jubilados)
+- ✅ Actualización automática de estados (Loan: ACTIVE→RETURNED, Copy: LOANED→AVAILABLE)
+- ✅ Generación automática de multas cuando hay retraso
+- ✅ Consultar historial con 7 opciones de filtrado
+- ✅ Display detallado: fechas, días de retraso, monto de multa, estado de pago
+
+**Correcciones críticas aplicadas:**
+- ✅ FineRepository.save() ahora preserva el estado de pago cuando genera ID
+- ✅ QueryReturnsForm eliminó doble "Presione Enter para continuar"
+- ✅ FineDummyData incluye multa para préstamo devuelto de Roberto Silva ($17.50 pagada)
+- ✅ formatReturn() muestra monto y estado de multa (💰 $XX.XX Pagada/Pendiente)
+
+**Verificación completa exitosa:**
+```
+
+📋 Devolución registrada:
+Socio: Roberto Silva (3001)
+Libro: Ficciones
+Ejemplar: COPY-004-1
+Fecha devolución: 07/10/2025
+⚠️ Devolución con 7 día(s) de retraso
+💰 Multa generada: $17.50 (Pagada)
+🎉 ¡ÉXITO! Multa calculada, generada y mostrada correctamente
+
+```TADO**
+
+```
+
 src/biblioteca/domain/entities/
-├── Author.java              // ✅ Autor
-├── Book.java               // ✅ Libro
-├── Category.java           // ✅ Categoría
-├── Copy.java               // ✅ Ejemplar
-├── Publisher.java          // ✅ Editorial
-├── Member.java             // ✅ Socio
-├── Loan.java               // ✅ Préstamo
-├── Fine.java               // ✅ Multa
-├── Reservation.java        // ✅ Reserva
-├── Notification.java       // ✅ Notificación
-└── SystemParameters.java   // ✅ Parámetros del Sistema
+├── Author.java // ✅ Autor
+├── Book.java // ✅ Libro
+├── Category.java // ✅ Categoría
+├── Copy.java // ✅ Ejemplar
+├── Publisher.java // ✅ Editorial
+├── Member.java // ✅ Socio
+├── Loan.java // ✅ Préstamo
+├── Fine.java // ✅ Multa
+├── Reservation.java // ✅ Reserva
+├── Notification.java // ✅ Notificación
+└── SystemParameters.java // ✅ Parámetros del Sistema
 
 src/biblioteca/domain/enums/
-├── CopyOrigin.java         // ✅ Origen del ejemplar (PURCHASE, DONATION)
-├── CopyState.java          // ✅ Estado del ejemplar (AVAILABLE, LOANED, RESERVED)
-├── MemberType.java         // ✅ Tipo de socio (STANDARD, STUDENT, RETIRED)
-├── LoanState.java          // ✅ Estado préstamo (ACTIVE, RETURNED, OVERDUE)
-├── ReservationState.java   // ✅ Estado reserva (ACTIVE, CANCELLED, FULFILLED)
+├── CopyOrigin.java // ✅ Origen del ejemplar (PURCHASE, DONATION)
+├── CopyState.java // ✅ Estado del ejemplar (AVAILABLE, LOANED, RESERVED)
+├── MemberType.java // ✅ Tipo de socio (STANDARD, STUDENT, RETIRED)
+├── LoanState.java // ✅ Estado préstamo (ACTIVE, RETURNED, OVERDUE)
+├── ReservationState.java // ✅ Estado reserva (ACTIVE, CANCELLED, FULFILLED)
 └── NotificationChannel.java // ✅ Canal (CONSOLE)
+
 ```
 
 ### **2. CASOS DE USO (Application Layer)**
 
 ```
+
 src/biblioteca/application/
 ├── socios/
-│   ├── registrar/
-│   │   ├── RegisterMemberRequest.java
-│   │   ├── RegisterMemberResult.java
-│   │   └── RegisterMemberUseCase.java
-│   ├── modificar/
-│   │   ├── ModifyMemberRequest.java
-│   │   ├── ModifyMemberResult.java
-│   │   └── ModifyMemberUseCase.java
-│   ├── consultar/
-│   │   ├── QueryMemberRequest.java
-│   │   ├── QueryMemberResult.java
-│   │   └── QueryMemberUseCase.java
-│   └── pagar_multa/
-│       ├── PayFineRequest.java
-│       ├── PayFineResult.java
-│       └── PayFineUseCase.java
+│ ├── registrar/
+│ │ ├── RegisterMemberRequest.java
+│ │ ├── RegisterMemberResult.java
+│ │ └── RegisterMemberUseCase.java
+│ ├── modificar/
+│ │ ├── ModifyMemberRequest.java
+│ │ ├── ModifyMemberResult.java
+│ │ └── ModifyMemberUseCase.java
+│ ├── consultar/
+│ │ ├── QueryMemberRequest.java
+│ │ ├── QueryMemberResult.java
+│ │ └── QueryMemberUseCase.java
+│ └── pagar_multa/
+│ ├── PayFineRequest.java
+│ ├── PayFineResult.java
+│ └── PayFineUseCase.java
 ├── prestamos/
-│   ├── crear/
-│   │   ├── CreateLoanRequest.java
-│   │   ├── CreateLoanResult.java
-│   │   └── CreateLoanUseCase.java
-│   └── carrito/
-│       ├── LoanCart.java
-│       ├── LoanCartItem.java
-│       ├── AddToCartRequest.java
-│       ├── AddToCartResult.java
-│       ├── AddToCartUseCase.java
-│       ├── RemoveFromCartRequest.java
-│       ├── RemoveFromCartResult.java
-│       ├── RemoveFromCartUseCase.java
-│       ├── ConfirmCartRequest.java
-│       ├── ConfirmCartResult.java
-│       └── ConfirmCartUseCase.java
+│ ├── crear/
+│ │ ├── CreateLoanRequest.java
+│ │ ├── CreateLoanResult.java
+│ │ └── CreateLoanUseCase.java
+│ └── carrito/
+│ ├── LoanCart.java
+│ ├── LoanCartItem.java
+│ ├── AddToCartRequest.java
+│ ├── AddToCartResult.java
+│ ├── AddToCartUseCase.java
+│ ├── RemoveFromCartRequest.java
+│ ├── RemoveFromCartResult.java
+│ ├── RemoveFromCartUseCase.java
+│ ├── ConfirmCartRequest.java
+│ ├── ConfirmCartResult.java
+│ └── ConfirmCartUseCase.java
 ├── devoluciones/
-│   ├── registrar/
-│   │   ├── RegisterReturnRequest.java
-│   │   ├── RegisterReturnResult.java
-│   │   └── RegisterReturnUseCase.java
+│ ├── registrar/
+│ │ ├── RegisterReturnRequest.java
+│ │ ├── RegisterReturnResult.java
+│ │ └── RegisterReturnUseCase.java
 ├── reservas/
-│   ├── crear/
-│   │   ├── CreateReservationRequest.java
-│   │   ├── CreateReservationResult.java
-│   │   └── CreateReservationUseCase.java
-│   ├── cancelar/
-│   │   ├── CancelReservationRequest.java
-│   │   ├── CancelReservationResult.java
-│   │   └── CancelReservationUseCase.java
-│   └── atender/
-│       ├── AttendReservationRequest.java
-│       ├── AttendReservationResult.java
-│       └── AttendReservationUseCase.java
+│ ├── crear/
+│ │ ├── CreateReservationRequest.java
+│ │ ├── CreateReservationResult.java
+│ │ └── CreateReservationUseCase.java
+│ ├── cancelar/
+│ │ ├── CancelReservationRequest.java
+│ │ ├── CancelReservationResult.java
+│ │ └── CancelReservationUseCase.java
+│ └── atender/
+│ ├── AttendReservationRequest.java
+│ ├── AttendReservationResult.java
+│ └── AttendReservationUseCase.java
 ├── consultas/
-│   ├── disponibilidad/
-│   │   ├── CheckAvailabilityRequest.java
-│   │   ├── CheckAvailabilityResult.java
-│   │   └── CheckAvailabilityUseCase.java
-│   ├── historial_socio/
-│   │   ├── MemberHistoryRequest.java
-│   │   ├── MemberHistoryResult.java
-│   │   └── MemberHistoryUseCase.java
-│   ├── prestamos_activos/
-│   │   ├── ActiveLoansRequest.java
-│   │   ├── ActiveLoansResult.java
-│   │   └── ActiveLoansUseCase.java
-│   ├── prestamos_vencidos/
-│   │   ├── OverdueLoansRequest.java
-│   │   ├── OverdueLoansResult.java
-│   │   └── OverdueLoansUseCase.java
-│   └── reservas_por_libro/
-│       ├── ReservationsByBookRequest.java
-│       ├── ReservationsByBookResult.java
-│       └── ReservationsByBookUseCase.java
+│ ├── disponibilidad/
+│ │ ├── CheckAvailabilityRequest.java
+│ │ ├── CheckAvailabilityResult.java
+│ │ └── CheckAvailabilityUseCase.java
+│ ├── historial_socio/
+│ │ ├── MemberHistoryRequest.java
+│ │ ├── MemberHistoryResult.java
+│ │ └── MemberHistoryUseCase.java
+│ ├── prestamos_activos/
+│ │ ├── ActiveLoansRequest.java
+│ │ ├── ActiveLoansResult.java
+│ │ └── ActiveLoansUseCase.java
+│ ├── prestamos_vencidos/
+│ │ ├── OverdueLoansRequest.java
+│ │ ├── OverdueLoansResult.java
+│ │ └── OverdueLoansUseCase.java
+│ └── reservas_por_libro/
+│ ├── ReservationsByBookRequest.java
+│ ├── ReservationsByBookResult.java
+│ └── ReservationsByBookUseCase.java
 ├── reportes/
-│   ├── libros_mas_prestados/
-│   │   ├── MostLoanedBooksRequest.java
-│   │   ├── MostLoanedBooksResult.java
-│   │   └── MostLoanedBooksUseCase.java
-│   ├── socios_morosos/
-│   │   ├── DelayedMembersRequest.java
-│   │   ├── DelayedMembersResult.java
-│   │   └── DelayedMembersUseCase.java
-│   └── recaudacion_multas/
-│       ├── FineRevenueRequest.java
-│       ├── FineRevenueResult.java
-│       └── FineRevenueUseCase.java
+│ ├── libros_mas_prestados/
+│ │ ├── MostLoanedBooksRequest.java
+│ │ ├── MostLoanedBooksResult.java
+│ │ └── MostLoanedBooksUseCase.java
+│ ├── socios_morosos/
+│ │ ├── DelayedMembersRequest.java
+│ │ ├── DelayedMembersResult.java
+│ │ └── DelayedMembersUseCase.java
+│ └── recaudacion_multas/
+│ ├── FineRevenueRequest.java
+│ ├── FineRevenueResult.java
+│ └── FineRevenueUseCase.java
 └── configuracion/
-    ├── actualizar_parametros/
-    │   ├── UpdateParametersRequest.java
-    │   ├── UpdateParametersResult.java
-    │   └── UpdateParametersUseCase.java
+├── actualizar_parametros/
+│ ├── UpdateParametersRequest.java
+│ ├── UpdateParametersResult.java
+│ └── UpdateParametersUseCase.java
+
 ```
 
 ### **3. REPOSITORIOS (Data Layer)**
 
 ```
+
 src/biblioteca/data/database/
 ├── MemberRepository.java
 ├── LoanRepository.java
@@ -154,87 +218,98 @@ src/biblioteca/data/database/
 ├── ReservationRepository.java
 ├── NotificationRepository.java
 └── SystemParametersRepository.java
+
 ```
 
 ### **3.1. DATOS DUMMY (Data Layer)**
 
 ```
+
 src/biblioteca/data/dummy/
-├── AuthorDummyData.java      // ✅ Ya existe
-├── BookDummyData.java        // ✅ Ya existe
-├── CategoryDummyData.java    // ✅ Ya existe
-├── PublisherDummyData.java   // ✅ Ya existe
-├── CopyDummyData.java        // ✅ Datos dummy de ejemplares
-├── MemberDummyData.java      // ✅ Datos dummy de socios
-├── LoanDummyData.java        // ✅ Datos dummy de préstamos
-├── FineDummyData.java        // 🆕 Datos dummy de multas
+├── AuthorDummyData.java // ✅ Ya existe
+├── BookDummyData.java // ✅ Ya existe
+├── CategoryDummyData.java // ✅ Ya existe
+├── PublisherDummyData.java // ✅ Ya existe
+├── CopyDummyData.java // ✅ Datos dummy de ejemplares
+├── MemberDummyData.java // ✅ Datos dummy de socios
+├── LoanDummyData.java // ✅ Datos dummy de préstamos
+├── FineDummyData.java // 🆕 Datos dummy de multas
 ├── ReservationDummyData.java // 🆕 Datos dummy de reservas
 └── SystemParametersDummyData.java // 🆕 Datos dummy de parámetros del sistema
+
 ```
 
 ### **4. FORMULARIOS (Console Layer)**
 
 ```
+
 src/biblioteca/console/forms/
 ├── member/
-│   ├── RegisterMemberForm.java
-│   ├── ModifyMemberForm.java
-│   ├── QueryMemberForm.java
-│   ├── FindMemberForm.java
-│   └── PayFineForm.java
+│ ├── RegisterMemberForm.java
+│ ├── ModifyMemberForm.java
+│ ├── QueryMemberForm.java
+│ ├── FindMemberForm.java
+│ └── PayFineForm.java
 ├── loan/
-│   ├── LoanCartForm.java
-│   ├── AddToCartForm.java
-│   └── ConfirmLoanForm.java
+│ ├── LoanCartForm.java
+│ ├── AddToCartForm.java
+│ └── ConfirmLoanForm.java
 ├── return/
-│   └── RegisterReturnForm.java
+│ └── RegisterReturnForm.java
 ├── reservation/
-│   ├── CreateReservationForm.java
-│   ├── CancelReservationForm.java
-│   └── AttendReservationForm.java
+│ ├── CreateReservationForm.java
+│ ├── CancelReservationForm.java
+│ └── AttendReservationForm.java
 ├── query/
-│   ├── CheckAvailabilityForm.java
-│   ├── MemberHistoryForm.java
-│   ├── ActiveLoansForm.java
-│   ├── OverdueLoansForm.java
-│   └── ReservationsByBookForm.java
+│ ├── CheckAvailabilityForm.java
+│ ├── MemberHistoryForm.java
+│ ├── ActiveLoansForm.java
+│ ├── OverdueLoansForm.java
+│ └── ReservationsByBookForm.java
 ├── report/
-│   ├── MostLoanedBooksForm.java
-│   ├── DelayedMembersForm.java
-│   └── FineRevenueForm.java
+│ ├── MostLoanedBooksForm.java
+│ ├── DelayedMembersForm.java
+│ └── FineRevenueForm.java
 └── config/
-    └── UpdateParametersForm.java
+└── UpdateParametersForm.java
+
 ```
 
 ### **5. CONTROLADORES (Console Layer)**
 
 ```
+
 src/biblioteca/console/controllers/
-├── MemberController.java       // Gestión de socios
-├── LoanController.java         // Gestión de préstamos
-├── ReturnController.java       // Gestión de devoluciones
-├── ReservationController.java  // Gestión de reservas
-├── QueryController.java        // Consultas
-├── ReportController.java       // Reportes
-└── ConfigController.java       // Configuración
+├── MemberController.java // Gestión de socios
+├── LoanController.java // Gestión de préstamos
+├── ReturnController.java // Gestión de devoluciones
+├── ReservationController.java // Gestión de reservas
+├── QueryController.java // Consultas
+├── ReportController.java // Reportes
+└── ConfigController.java // Configuración
+
 ```
 
 ### **6. SERVICIOS ADICIONALES**
 
 ```
+
 src/biblioteca/domain/services/
-├── LoanCalculatorService.java      // Cálculos de préstamos y multas
-├── ReservationQueueService.java    // Gestión de colas de reservas
-├── NotificationService.java        // Envío de notificaciones
-└── ValidationService.java          // Validaciones de negocio
+├── LoanCalculatorService.java // Cálculos de préstamos y multas
+├── ReservationQueueService.java // Gestión de colas de reservas
+├── NotificationService.java // Envío de notificaciones
+└── ValidationService.java // Validaciones de negocio
+
 ```
 
 ### **7. ACTUALIZACIONES A ARCHIVOS EXISTENTES**
 
 ```
-src/biblioteca/console/controllers/MainController.java  // ← ACTUALIZAR menú principal
-src/biblioteca/console/ioc/DependencyContainer.java     // ← ACTUALIZAR dependencias
-```
+
+src/biblioteca/console/controllers/MainController.java // ← ACTUALIZAR menú principal
+src/biblioteca/console/ioc/DependencyContainer.java // ← ACTUALIZAR dependencias
+
+````
 
 ## 🎯 **PRINCIPIOS DE DISEÑO ORIENTADO A OBJETOS**
 
@@ -254,7 +329,7 @@ private Book book;          // Referencia al objeto Book
 private String memberId;    // Solo ID, viola encapsulación
 private String copyCode;    // Solo código, rompe relaciones OOP
 private String bookId;      // Solo ID, pierde información del objeto
-```
+````
 
 #### **✅ SEGUIR DIAGRAMA ORIGINAL:**
 
@@ -411,20 +486,36 @@ for (int i = 0; i < miembros.size(); i++) {
 4. **UX uniforme** para el usuario
 5. **Menos bugs** por lógica duplicada
 
-## 🎯 **RESUMEN DE IMPLEMENTACIÓN**
+## 🎯 **PLAN REPLANTEADO - ACTUALIZADO 13/10/2025**
 
-**Total de archivos nuevos:** ~85 archivos  
-**Controladores nuevos:** 6 controladores  
-**Nuevas funcionalidades del menú:**
+### **📦 DISTRIBUCIÓN POR TRABAJOS PRÁCTICOS:**
 
-- ✅ Libros (ya implementado)
-- ✅ Socios (4 operaciones)
-- ✅ Préstamos (carrito de préstamos)
-- 🆕 Devoluciones (1 operación)
-- 🆕 Reservas (3 operaciones)
-- 🆕 Consultas (5 tipos de consultas)
-- 🆕 Reportes (3 tipos de reportes)
-- 🆕 Configuración (5 parámetros configurables)
+**TP2 (ENTREGADO):**
+
+- ✅ Módulo LIBROS (completo)
+- ✅ Módulo SOCIOS (completo)
+- ✅ Módulo PRÉSTAMOS (completo)
+
+**TP3 (PLANEADO): DEVOLUCIONES + CONFIGURACIÓN**
+
+- ✅ Módulo DEVOLUCIONES (completo)
+- 🆕 Módulo CONFIGURACIÓN (a implementar)
+
+**TP4 (PLANEADO): REPORTES**
+
+- 🆕 Módulo REPORTES completo (a implementar)
+
+### **❌ DESCARTADO DEL PLAN ORIGINAL:**
+
+- ❌ **RESERVAS**: No prioritario, funcionalidad compleja con poco valor educativo
+- ❌ **CONSULTAS como módulo separado**: Ya implementadas orgánicamente en cada módulo
+  - Libros: Búsqueda y estadísticas
+  - Socios: Consulta completa de información
+  - Préstamos: Ver préstamos actuales y estadísticas
+  - Devoluciones: Historial con 7 tipos de filtros
+
+**Total de archivos a crear:** ~45 archivos (Config: ~15, Reportes: ~30)  
+**Controladores nuevos:** 2 controladores (ConfigController, ReportController)
 
 ## 📋 **PROGRESO DE IMPLEMENTACIÓN**
 
@@ -520,13 +611,154 @@ for (int i = 0; i < miembros.size(); i++) {
 🎉 ¡ÉXITO! Sincronización correcta
 ```
 
-### 🆕 **PENDIENTE POR MÓDULO**
+### 🆕 **MÓDULOS PENDIENTES SEGÚN NUEVO PLAN**
 
-**📋 TODOs pendientes para completar en módulos futuros:**
+#### **🔧 CONFIGURACIÓN (Prioridad 1 - TP3)**
 
-- [ ] **PayFineUseCase**: Integrar FineRepository para pagos reales de multas (Prioridad 3)
+**Archivos a crear:**
+
+```
+src/biblioteca/application/configuracion/
+├── ver/
+│   ├── ViewConfigRequest.java
+│   ├── ViewConfigResult.java
+│   └── ViewConfigUseCase.java
+└── actualizar/
+    ├── UpdateConfigRequest.java
+    ├── UpdateConfigResult.java
+    └── UpdateConfigUseCase.java
+
+src/biblioteca/console/configuracion/
+├── ConfigController.java
+├── ViewConfigForm.java
+└── UpdateConfigForm.java
+```
+
+**Funcionalidades:**
+
+- Ver todos los parámetros actuales del sistema
+- Modificar días de préstamo (base y extras por tipo de socio)
+- Modificar límite de préstamos simultáneos por tipo de socio
+- Modificar monto de multa por día de retraso
+- Modificar descuentos en multas por tipo de socio
+- Validación de valores (no permitir negativos, límites razonables)
+
+**Estimación:** 2-3 horas, ~15 archivos
+
+#### **📊 REPORTES (Prioridad 2 - TP4)**
+
+**Archivos a crear:**
+
+```
+src/biblioteca/application/reportes/
+├── libros_mas_prestados/
+│   ├── MostLoanedBooksRequest.java
+│   ├── MostLoanedBooksResult.java
+│   └── MostLoanedBooksUseCase.java
+├── socios_activos/
+│   ├── ActiveMembersRequest.java
+│   ├── ActiveMembersResult.java
+│   └── ActiveMembersUseCase.java
+├── analisis_multas/
+│   ├── FineAnalysisRequest.java
+│   ├── FineAnalysisResult.java
+│   └── FineAnalysisUseCase.java
+├── analisis_temporal/
+│   ├── TemporalAnalysisRequest.java
+│   ├── TemporalAnalysisResult.java
+│   └── TemporalAnalysisUseCase.java
+└── inventario/
+    ├── InventoryReportRequest.java
+    ├── InventoryReportResult.java
+    └── InventoryReportUseCase.java
+
+src/biblioteca/console/reportes/
+├── ReportController.java
+├── MostLoanedBooksForm.java
+├── ActiveMembersForm.java
+├── FineAnalysisForm.java
+├── TemporalAnalysisForm.java
+└── InventoryReportForm.java
+
+src/biblioteca/console/utils/
+└── ChartHelper.java  // Nueva utility para gráficos ASCII
+```
+
+**Funcionalidades:**
+
+1. **Libros más prestados**
+
+   - Top 10 libros con más préstamos
+   - Gráfico de barras ASCII
+   - Detalles: título, autor, cantidad de préstamos
+
+2. **Socios más activos**
+
+   - Ranking de socios por cantidad de préstamos
+   - Clasificación por tipo de socio
+   - Préstamos activos vs históricos
+
+3. **Análisis de multas**
+
+   - Total recaudado por período (mes/año)
+   - Multas pendientes vs pagadas (cantidad y monto)
+   - Top socios morosos (con multas sin pagar)
+   - Proyección de recaudación
+
+4. **Análisis temporal**
+
+   - Préstamos por mes/semana/día
+   - Tendencias de uso (gráfico de línea ASCII)
+   - Comparativa entre períodos
+   - Predicciones simples
+
+5. **Reporte de inventario**
+   - Ejemplares disponibles vs prestados por libro
+   - Libros con bajo stock (< 2 ejemplares disponibles)
+   - Tasa de rotación por libro
+   - Sugerencias de compra basadas en demanda
+
+**Estimación:** 3-4 horas, ~30 archivos
+
+### 🆕 **SERVICIOS ADICIONALES PARA REPORTES**
+
+```
+src/biblioteca/domain/services/
+├── ChartGeneratorService.java    // Generación de gráficos ASCII
+└── StatisticsCalculatorService.java  // Cálculos estadísticos
+```
+
+### **✅ Todos los TODOs Críticos Completados:**
+
+- [x] **PayFineUseCase**: ✅ FineRepository integrado - pagos reales de multas funcionando
 - [x] **QueryMemberUseCase**: ✅ LoanRepository integrado - muestra préstamos activos reales
-- [x] **✅ RESUELTO**: Problema de actualización de estado del ejemplar - funcionando correctamente
+- [x] **QueryMemberUseCase**: ✅ FineRepository integrado - muestra multas reales y últimas 5 devoluciones
+- [x] **FindMemberForm**: ✅ Sección "DEVOLUCIONES RECIENTES" agregada con indicadores visuales
+
+**🔧 TODOs Pendientes Identificados:**
+
+- [x] **FindMemberForm - Detalle de beneficios del socio**: ✅ **COMPLETADO**
+
+  - **Problema resuelto**: Los beneficios ahora se muestran dinámicamente usando `SystemParametersRepository`
+  - **Solución implementada**:
+    - `FindMemberForm.java`: Nuevo método `displayMemberBenefits()` agregado
+    - Muestra valores reales: días de préstamo (base + extra), límite de préstamos, descuentos en multas
+    - Incluye ejemplo de cálculo: "$X.XX por día (en lugar de $Y.YY)" para tipos con descuento
+  - **Archivos modificados**:
+    - `FindMemberForm.java`: Integración con SystemParametersRepository
+    - `DependencyContainer.java`: Actualizado constructor de FindMemberForm
+  - **Estado**: ✅ **COMPLETADO**
+
+- [x] **FineDummyData - Agregar escenario de prueba**: ✅ **COMPLETADO**
+  - **Objetivo cumplido**: Facilitar testing de pago de multas con todos los tipos de socio
+  - **Implementación**:
+    - Fine 5: **ESTUDIANTE** - Ana Martínez (2001) → $25.00 (10 días × $5 × 50% descuento)
+    - Fine 6: **JUBILADO** - Elena Morales (3002) → $15.00 (6 días × $5 × 50% descuento)
+    - Fine 7: **ESTÁNDAR** - Pedro Sánchez (1004) → $40.00 (8 días × $5 × sin descuento)
+  - **Características**: Todas las multas sin pagar (isPaid = false) para probar PayFineForm
+  - **Display mejorado**: Mensaje en consola con resumen de escenarios de prueba
+  - **Configuración**: SystemParametersRepository actualizado a $5.00/día (valor realista)
+  - **Estado**: ✅ **COMPLETADO**
 
 **✅ MEJORAS COMPLETADAS PARA MÓDULO SOCIOS:**
 
@@ -563,115 +795,215 @@ for (int i = 0; i < miembros.size(); i++) {
 - [x] **Corrección crítica**: Sincronización de datos entre repositorios
 - [x] **Verificación completa**: Módulo probado y funcionando al 100%
 
-#### **DEVOLUCIONES (Prioridad 3)**
+#### **✅ DEVOLUCIONES (COMPLETADO)**
 
-- [ ] Crear entidades: Fine
-- [ ] Crear use cases: RegisterReturn
-- [ ] Crear forms: RegisterReturnForm
-- [ ] Crear ReturnController
-- [ ] Crear FineRepository
-- [ ] Crear datos dummy: FineDummyData
-- [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "4. Devoluciones" al menú principal
-- [ ] **Completar TODOs**:
-  - Integrar FineRepository en PayFineUseCase para pagos reales de multas
-  - Integrar FineRepository en QueryMemberUseCase para mostrar multas reales
+- [x] Crear entidades: Fine con estado de pago y fechas
+- [x] Crear use cases: RegisterReturn con cálculo automático de multas
+- [x] Crear use cases: QueryReturns con 6 tipos de filtros (todos, por socio, por libro, por fecha, con/sin multa)
+- [x] Crear forms: RegisterReturnForm con preview de multa antes de confirmar
+- [x] Crear forms: QueryReturnsForm con 7 opciones de consulta y display mejorado
+- [x] Crear ReturnController con menú de 3 opciones
+- [x] Crear FineRepository con operaciones CRUD completas
+- [x] Crear SystemParametersRepository para configuración de multas
+- [x] Crear datos dummy: FineDummyData con multas de prueba (4 multas)
+- [x] Actualizar DependencyContainer con componentes de devoluciones
+- [x] **Actualizar MainController** - Agregar opción "4. Gestión de Devoluciones" al menú principal
+- [x] **Completar TODOs**:
+  - [x] Integrar FineRepository en PayFineUseCase para pagos reales de multas
+  - [x] Integrar FineRepository en QueryMemberUseCase para mostrar multas reales y últimas 5 devoluciones
+  - [x] Mejorar FindMemberForm para mostrar sección "DEVOLUCIONES RECIENTES"
+- [x] **Características avanzadas implementadas**:
+  - [x] Cálculo automático de multas según días de retraso ($5/día base)
+  - [x] Descuentos por tipo de socio (50% para estudiantes, 50% para jubilados)
+  - [x] Preview de multa antes de confirmar devolución
+  - [x] Historial de devoluciones con múltiples filtros
+  - [x] Display de monto de multa en historial (Pagada/Pendiente)
+  - [x] Indicadores visuales (⚠️ retraso, ✓ a tiempo, 💰 multa)
+- [x] **Correcciones críticas aplicadas**:
+  - [x] FineRepository.save() preserva estado de pago al generar ID
+  - [x] QueryReturnsForm elimina doble "Presione Enter"
+  - [x] FineDummyData incluye multa para préstamo devuelto de Roberto Silva
+- [x] **Módulo 100% completado y verificado**
 
-#### **RESERVAS (Prioridad 4)**
+#### **🔧 CONFIGURACIÓN (Prioridad 1 - TP3)**
 
-- [ ] Crear entidades: Reservation, ReservationState
-- [ ] Crear use cases: CreateReservation, CancelReservation, AttendReservation
-- [ ] Crear forms: CreateReservationForm, CancelReservationForm, AttendReservationForm
-- [ ] Crear ReservationController
-- [ ] Crear ReservationRepository
-- [ ] Crear datos dummy: ReservationDummyData
-- [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "5. Reservas" al menú principal
-
-#### **CONSULTAS (Prioridad 5)**
-
-- [ ] Crear use cases: CheckAvailability, MemberHistory, ActiveLoans, OverdueLoans, ReservationsByBook
-- [ ] Crear forms: CheckAvailabilityForm, MemberHistoryForm, ActiveLoansForm, OverdueLoansForm, ReservationsByBookForm
-- [ ] Crear QueryController
-- [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "6. Consultas" al menú principal
-
-#### **REPORTES (Prioridad 6)**
-
-- [ ] Crear use cases: MostLoanedBooks, DelayedMembers, FineRevenue
-- [ ] Crear forms: MostLoanedBooksForm, DelayedMembersForm, FineRevenueForm
-- [ ] Crear ReportController
-- [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "7. Reportes" al menú principal
-
-#### **CONFIGURACIÓN (Prioridad 7)**
-
-- [ ] Crear entidades: SystemParameters
-- [ ] Crear use cases: UpdateParameters
-- [ ] Crear forms: UpdateParametersForm
+- [ ] Crear use cases: ViewConfig, UpdateConfig
+- [ ] Crear forms: ViewConfigForm, UpdateConfigForm
 - [ ] Crear ConfigController
-- [ ] Crear SystemParametersRepository
-- [ ] Crear datos dummy: SystemParametersDummyData
 - [ ] Actualizar DependencyContainer
-- [ ] **Actualizar MainController** - Agregar opción "8. Configuración" al menú principal
+- [ ] **Actualizar MainController** - Agregar opción "5. Configuración del Sistema" al menú principal
+- [ ] Validaciones de parámetros (valores positivos, límites razonables)
+- [ ] Testing de modificación de parámetros en vivo
 
-#### **SERVICIOS ADICIONALES (Prioridad 8)**
+**Estado:** ⚡ SystemParametersRepository ya existe (50% completado)
 
-- [ ] Crear LoanCalculatorService
-- [ ] Crear ReservationQueueService
-- [ ] Crear NotificationService
-- [ ] Crear ValidationService
+#### **📊 REPORTES (Prioridad 2 - TP4)**
 
-#### **INTEGRACIÓN DE TODOs PENDIENTES (Prioridad 7.5)**
+- [ ] Crear use cases: MostLoanedBooks, ActiveMembers, FineAnalysis, TemporalAnalysis, InventoryReport
+- [ ] Crear forms: 5 forms de reportes
+- [ ] Crear ReportController con menú de 6 opciones
+- [ ] Crear ChartHelper para gráficos ASCII
+- [ ] Crear servicios: ChartGeneratorService, StatisticsCalculatorService
+- [ ] Actualizar DependencyContainer
+- [ ] **Actualizar MainController** - Agregar opción "6. Reportes y Estadísticas" al menú principal
+- [ ] Implementar gráficos de barras ASCII
+- [ ] Implementar gráficos de línea ASCII
+- [ ] Testing de todos los reportes con datos dummy
 
-Esta fase se encarga de completar todas las integraciones pendientes entre módulos:
+#### **❌ DESCARTADOS DEL PLAN ORIGINAL:**
 
-- [ ] **Integrar LoanRepository en QueryMemberUseCase**:
+- ~~Reservas~~ - No prioritario, complejidad alta, poco valor educativo
+- ~~Consultas como módulo separado~~ - Ya implementadas en cada módulo
+- ~~NotificationService~~ - Fuera del alcance actual
+- ~~ReservationQueueService~~ - No aplica sin módulo de reservas
+
+#### **✅ INTEGRACIÓN DE TODOs PENDIENTES (COMPLETADO)**
+
+**Esta fase se completó durante la implementación del módulo DEVOLUCIONES:**
+
+- [x] **Integrar LoanRepository en QueryMemberUseCase**:
 
   - Archivo: `src/biblioteca/application/socios/consultar/QueryMemberUseCase.java`
-  - Línea 14: `// TODO: Add LoanRepository and FineRepository when implemented`
-  - Línea 34: `// TODO: Replace with real data from LoanRepository and FineRepository`
-  - Acción: Mostrar préstamos activos reales del socio
+  - ~~Línea 14: `// TODO: Add LoanRepository and FineRepository when implemented`~~ **ELIMINADO**
+  - ~~Línea 34: `// TODO: Replace with real data from LoanRepository and FineRepository`~~ **ELIMINADO**
+  - ✅ **Completado**: Muestra préstamos activos reales del socio
+  - ✅ **Completado**: Muestra últimas 5 devoluciones ordenadas por fecha
 
-- [ ] **Integrar FineRepository en PayFineUseCase**:
+- [x] **Integrar FineRepository en PayFineUseCase**:
 
   - Archivo: `src/biblioteca/application/socios/pagar_multa/PayFineUseCase.java`
-  - Línea 14: `// TODO: Add FineRepository when implemented`
-  - Línea 37: `// TODO: Implement fine payment logic when FineRepository is available`
-  - Acción: Implementar pagos reales de multas
+  - ~~Línea 14: `// TODO: Add FineRepository when implemented`~~ **ELIMINADO**
+  - ~~Línea 37: `// TODO: Implement fine payment logic when FineRepository is available`~~ **ELIMINADO**
+  - ✅ **Completado**: Implementa pagos reales de multas
+  - ✅ **Completado**: Actualiza estado de multa (Pendiente → Pagada)
 
-- [ ] **Integrar FineRepository en QueryMemberUseCase**:
+- [x] **Integrar FineRepository en QueryMemberUseCase**:
+
   - Archivo: `src/biblioteca/application/socios/consultar/QueryMemberUseCase.java`
-  - Acción: Mostrar multas pendientes reales del socio
+  - ✅ **Completado**: Muestra multas pendientes reales del socio
+  - ✅ **Completado**: Calcula total de multas pendientes
 
-#### **FINALIZACIÓN (Prioridad 8)**
+- [x] **Mejorar FindMemberForm con devoluciones recientes**:
+  - Archivo: `src/biblioteca/console/socios/FindMemberForm.java`
+  - ✅ **Completado**: Nueva sección "DEVOLUCIONES RECIENTES"
+  - ✅ **Completado**: Indicadores visuales (✓ a tiempo / ⚠️ con retraso)
+  - ✅ **Completado**: Muestra días de retraso cuando aplica
 
-- [ ] Revisión final del MainController con todas las opciones
+**🎉 Resultado**: Todos los módulos ahora están completamente integrados. No quedan TODOs pendientes en el código base.
+
+#### **FINALIZACIÓN**
+
+- [x] Revisión parcial del MainController - 4 módulos implementados
+- [x] Testing de módulos implementados - Libros, Socios, Préstamos, Devoluciones funcionando al 100%
+- [x] ✅ **Todos los TODOs críticos completados** - No quedan integraciones pendientes
+- [ ] **TP3**: Implementar módulo de Configuración (2-3 horas)
+- [ ] **TP4**: Implementar módulo de Reportes (3-4 horas)
 - [ ] Testing integral de todos los módulos
-- [ ] Verificación de que todos los TODOs han sido completados
-- [ ] Documentación final del sistema
+- [ ] Documentación final del sistema (manuales de usuario)
 
-## 📝 **GESTIÓN DE TODOs Y DEPENDENCIAS**
+## 🎯 **ESTRATEGIA DE DESARROLLO - PLAN ACTUALIZADO**
 
-### **TODOs Identificados en el Código:**
+### **Metodología de Implementación por TPs:**
 
-Durante la implementación inicial del módulo SOCIOS, se crearon TODOs que marcan integraciones futuras:
+**TP2 (ENTREGADO - 13/10/2025):**
 
-1. **PayFineUseCase** - Requiere FineRepository (Módulo DEVOLUCIONES)
-2. **QueryMemberUseCase** - Requiere LoanRepository y FineRepository (Módulos PRÉSTAMOS y DEVOLUCIONES)
+- ✅ Libros: Sistema completo de gestión de inventario
+- ✅ Socios: Gestión de membresías y beneficios
+- ✅ Préstamos: Sistema de carrito y validaciones de negocio
 
-### **Mejoras de UX Identificadas:**
+**TP3 (PRÓXIMO - Fecha estimada: 20/10/2025):**
 
-Durante la revisión del módulo SOCIOS, se identificaron las siguientes mejoras de experiencia de usuario:
+- ✅ Devoluciones: Sistema completo con multas y consultas (YA IMPLEMENTADO)
+- 🆕 Configuración: Parametrización dinámica del sistema
+- Tema: "Gestión de Devoluciones, Multas y Parametrización"
+- Complejidad: BAJA (80% ya completado)
+- Tiempo estimado: 2-3 horas
 
-1. **QueryMemberForm vs FindMemberForm** - Posible redundancia funcional a evaluar
-2. **PayFineForm** - Necesita implementar búsqueda de socio por ID/nombre en lugar de pedir ID directamente
+**TP4 (FUTURO - Fecha estimada: 27/10/2025):**
 
-### **Estrategia de TODOs:**
+- 🆕 Reportes: Sistema completo de analytics y visualización
+- Tema: "Sistema de Reportes y Analytics"
+- Complejidad: MEDIA
+- Tiempo estimado: 3-4 horas
+- Incluye: 5 tipos de reportes + gráficos ASCII
 
-- 🔴 **TODOs Críticos**: Se implementan en la fase de "Integración de TODOs Pendientes"
-- 🟡 **TODOs Menores**: Se pueden completar durante el desarrollo de cada módulo
-- ✅ **TODOs Completados**: Se marcan como completados y se documentan
+### **Testing Incremental:**
+
+Cada módulo se prueba individualmente antes de integrar:
+
+1. **✅ TP2 Verificado**
+
+   - Menú principal con opciones 1, 2, 3 funcionales
+   - Testing completo: CRUD de libros, socios y préstamos
+
+2. **✅ Devoluciones Verificado (parte de TP3)**
+
+   - Menú principal opción 4 funcional
+   - Testing: Registrar devoluciones, consultar historial, cálculo de multas
+
+3. **🔜 Configuración (TP3)**
+
+   - Al completar: Menú principal opción 5 funcional
+   - Testing: Ver y modificar parámetros del sistema
+
+4. **🔜 Reportes (TP4)**
+   - Al completar: Menú principal opción 6 funcional
+   - Testing: Generar todos los tipos de reportes con datos dummy
+
+### **✅ TODOs Completados con el Módulo DEVOLUCIONES:**
+
+Durante la implementación del módulo DEVOLUCIONES, se completaron todos los TODOs identificados:
+
+1. **✅ PayFineUseCase** - ~~Requiere FineRepository~~ **COMPLETADO**
+
+   - Archivo: `src/biblioteca/application/socios/pagar_multa/PayFineUseCase.java`
+   - ✅ FineRepository integrado completamente
+   - ✅ Implementada lógica real de pago de multas
+   - ✅ Actualización de estado: Pendiente → Pagada
+
+2. **✅ QueryMemberUseCase** - ~~Requiere LoanRepository y FineRepository~~ **COMPLETADO**
+
+   - Archivo: `src/biblioteca/application/socios/consultar/QueryMemberUseCase.java`
+   - ✅ LoanRepository integrado (completado en módulo PRÉSTAMOS)
+   - ✅ FineRepository integrado (completado en módulo DEVOLUCIONES)
+   - ✅ Muestra préstamos activos reales del socio
+   - ✅ Muestra multas pendientes con montos reales
+   - ✅ Incluye últimas 5 devoluciones del socio
+
+3. **✅ FindMemberForm** - ~~Necesita mostrar devoluciones recientes~~ **COMPLETADO**
+   - Archivo: `src/biblioteca/console/socios/FindMemberForm.java`
+   - ✅ Nueva sección "DEVOLUCIONES RECIENTES" agregada
+   - ✅ Muestra últimas 5 devoluciones con indicadores visuales
+   - ✅ Indica si fueron a tiempo o con retraso
+   - ✅ Calcula días de retraso cuando aplica
+
+### **✅ Mejoras de UX Completadas:**
+
+Durante la revisión y desarrollo de los módulos, se completaron todas las mejoras de UX identificadas:
+
+1. **✅ QueryMemberForm vs FindMemberForm** - Redundancia eliminada
+
+   - QueryMemberForm eliminado completamente
+   - Funcionalidad consolidada en FindMemberForm mejorado
+
+2. **✅ PayFineForm** - Búsqueda de socio implementada
+   - Implementada búsqueda por ID o nombre usando InputHelper.seleccionar()
+   - Experiencia de usuario mejorada significativamente
+
+### **Estado Actual de TODOs en el Código:**
+
+**Todos los TODOs críticos del código han sido resueltos:**
+
+- ✅ `PayFineUseCase.java` línea 14: ~~`// TODO: Add FineRepository when implemented`~~ **RESUELTO**
+- ✅ `PayFineUseCase.java` línea 37: ~~`// TODO: Implement fine payment logic`~~ **RESUELTO**
+- ✅ `QueryMemberUseCase.java` línea 14: ~~`// TODO: Add LoanRepository and FineRepository`~~ **RESUELTO**
+- ✅ `QueryMemberUseCase.java` línea 34: ~~`// TODO: Replace with real data`~~ **RESUELTO**
+
+### **Estrategia de TODOs (Ya No Aplica - Todos Completados):**
+
+- ✅ **TODOs Críticos**: ~~Se implementan en la fase de "Integración de TODOs Pendientes"~~ **COMPLETADOS**
+- ✅ **TODOs Menores**: ~~Se pueden completar durante el desarrollo de cada módulo~~ **COMPLETADOS**
+- ✅ **TODOs Completados**: Todos marcados y documentados ✨
 
 ### **🛠️ RECORDATORIO CRÍTICO - UTILIDADES DE CONSOLA:**
 
@@ -693,45 +1025,4 @@ Durante la revisión del módulo SOCIOS, se identificaron las siguientes mejoras
 - ✅ Seguir los patrones ya establecidos en LIBROS, SOCIOS y PRÉSTAMOS
 - ✅ Usar el checklist de utilities documentado arriba
 
-## 🎯 **ESTRATEGIA DE DESARROLLO Y TESTING POR FASES**
-
-### **Metodología de Implementación:**
-
-Cada prioridad incluye la actualización del `MainController` para permitir testing incremental:
-
-1. **✅ Socios** - Base fundamental para préstamos
-
-   - ✅ Completado: Menú principal "2. Socios" funcional
-   - ✅ Testing: Registrar, modificar, consultar socios y pagar multas
-
-2. **✅ Préstamos** - Funcionalidad principal de la biblioteca
-
-   - ✅ Completado: Menú principal "3. Préstamos" funcional
-   - ✅ Testing: Crear préstamos con carrito de libros, sincronización de datos verificada
-
-3. **Devoluciones** - Cierra el ciclo de préstamos
-
-   - Al completar: Menú principal mostrará "4. Devoluciones" funcional
-   - Testing: Procesar devoluciones y calcular multas
-
-4. **Reservas** - Funcionalidad avanzada
-
-   - Al completar: Menú principal mostrará "5. Reservas" funcional
-   - Testing: Crear, cancelar y atender reservas
-
-5. **Consultas** - Información del sistema
-
-   - Al completar: Menú principal mostrará "6. Consultas" funcional
-   - Testing: Consultar disponibilidad, historiales, préstamos activos/vencidos
-
-6. **Reportes** - Analytics del sistema
-
-   - Al completar: Menú principal mostrará "7. Reportes" funcional
-   - Testing: Generar reportes de libros más prestados, socios morosos, recaudación
-
-7. **Configuración** - Parametrización del sistema
-
-   - Al completar: Menú principal mostrará "8. Configuración" funcional
-   - Testing: Modificar parámetros del sistema
-
-8. **Finalización** - Testing integral y documentación
+## 📝 **GESTIÓN DE TODOs Y DEPENDENCIAS**

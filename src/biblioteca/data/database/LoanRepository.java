@@ -1,4 +1,4 @@
-package biblioteca.data;
+package biblioteca.data.database;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -142,6 +142,17 @@ public class LoanRepository {
         return loans.stream()
                 .filter(loan -> loan.getCopy().getCode().equals(copy.getCode()))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Encuentra un préstamo activo para un ejemplar específico.
+     */
+    public Loan findActiveLoanByCopy(Copy copy) {
+        return loans.stream()
+                .filter(loan -> loan.getCopy().getCode().equals(copy.getCode()))
+                .filter(loan -> loan.getState() == LoanState.ACTIVE)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
