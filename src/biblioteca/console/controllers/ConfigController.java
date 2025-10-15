@@ -1,4 +1,4 @@
-package biblioteca.console.configuracion;
+package biblioteca.console.controllers;
 
 import java.util.List;
 

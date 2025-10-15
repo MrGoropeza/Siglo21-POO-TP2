@@ -1,4 +1,4 @@
-package biblioteca.console.forms.prestamos;
+package biblioteca.console.forms;
 
 import java.util.ArrayList;
 

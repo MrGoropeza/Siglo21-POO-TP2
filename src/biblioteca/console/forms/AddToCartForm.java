@@ -1,4 +1,4 @@
-package biblioteca.console.forms.prestamos;
+package biblioteca.console.forms;
 
 import biblioteca.application.prestamos.carrito.LoanCart;
 import biblioteca.application.prestamos.create.CreateLoanResult;

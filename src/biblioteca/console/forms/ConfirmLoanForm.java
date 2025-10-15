@@ -1,4 +1,4 @@
-package biblioteca.console.forms.prestamos;
+package biblioteca.console.forms;
 
 import java.util.List;
 
@@ -66,6 +66,49 @@ public class ConfirmLoanForm {
     }
 
     /**
+     * Permite editar el carrito antes de confirmar
+     */
+    public boolean editCart(LoanCart cart) {
+        DisplayHelper.renderSubtitle("Editar Carrito");
+
+        if (cart.isEmpty()) {
+            DisplayHelper.printWarning("El carrito está vacío");
+            return false;
+        }
+
+        while (true) {
+            showCartItems(cart);
+
+            System.out.println("\nOpciones:");
+            System.out.println("1. Remover ejemplar");
+            System.out.println("2. Limpiar carrito");
+            System.out.println("3. Volver al menú anterior");
+
+            int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción: ", 1, 3);
+
+            switch (opcion) {
+                case 1:
+                    removeItemFromCart(cart);
+                    break;
+                case 2:
+                    if (InputHelper.confirmar("¿Está seguro de limpiar todo el carrito?")) {
+                        cart.clear();
+                        DisplayHelper.printSuccess("Carrito limpiado");
+                        return false; // Carrito vacío, salir
+                    }
+                    break;
+                case 3:
+                    return true; // Continuar con el carrito actual
+            }
+
+            if (cart.isEmpty()) {
+                DisplayHelper.printWarning("El carrito está vacío");
+                return false;
+            }
+        }
+    }
+
+    /**
      * Muestra el resumen del préstamo antes de confirmar
      */
     private void showLoanSummary(LoanCart cart) {
@@ -119,49 +162,6 @@ public class ConfirmLoanForm {
         }
 
         System.out.println("-".repeat(60));
-    }
-
-    /**
-     * Permite editar el carrito antes de confirmar
-     */
-    public boolean editCart(LoanCart cart) {
-        DisplayHelper.renderSubtitle("Editar Carrito");
-
-        if (cart.isEmpty()) {
-            DisplayHelper.printWarning("El carrito está vacío");
-            return false;
-        }
-
-        while (true) {
-            showCartItems(cart);
-
-            System.out.println("\nOpciones:");
-            System.out.println("1. Remover ejemplar");
-            System.out.println("2. Limpiar carrito");
-            System.out.println("3. Volver al menú anterior");
-
-            int opcion = InputHelper.leerEnteroEnRango("Seleccione una opción: ", 1, 3);
-
-            switch (opcion) {
-                case 1:
-                    removeItemFromCart(cart);
-                    break;
-                case 2:
-                    if (InputHelper.confirmar("¿Está seguro de limpiar todo el carrito?")) {
-                        cart.clear();
-                        DisplayHelper.printSuccess("Carrito limpiado");
-                        return false; // Carrito vacío, salir
-                    }
-                    break;
-                case 3:
-                    return true; // Continuar con el carrito actual
-            }
-
-            if (cart.isEmpty()) {
-                DisplayHelper.printWarning("El carrito está vacío");
-                return false;
-            }
-        }
     }
 
     /**

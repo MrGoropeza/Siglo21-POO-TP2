@@ -1,4 +1,4 @@
-package biblioteca.console.devoluciones;
+package biblioteca.console.forms;
 
 import biblioteca.application.devoluciones.registrar.RegisterReturnRequest;
 import biblioteca.application.devoluciones.registrar.RegisterReturnResult;

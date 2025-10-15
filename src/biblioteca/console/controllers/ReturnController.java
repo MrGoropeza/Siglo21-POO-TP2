@@ -1,5 +1,7 @@
-package biblioteca.console.devoluciones;
+package biblioteca.console.controllers;
 
+import biblioteca.console.forms.QueryReturnsForm;
+import biblioteca.console.forms.RegisterReturnForm;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 

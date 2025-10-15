@@ -4,12 +4,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 import biblioteca.application.prestamos.create.CreateLoanUseCase;
-import biblioteca.console.forms.prestamos.LoanCartForm;
+import biblioteca.console.forms.LoanCartForm;
 import biblioteca.console.utils.DisplayHelper;
 import biblioteca.console.utils.InputHelper;
 import biblioteca.console.utils.MemberSearchHelper;
-import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.CopyRepository;
+import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.MemberRepository;
 import biblioteca.domain.entities.Loan;
 import biblioteca.domain.entities.Member;
