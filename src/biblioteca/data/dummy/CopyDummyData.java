@@ -77,6 +77,16 @@ public class CopyDummyData {
                     CopyOrigin.DONATION,
                     book);
             copies.add(copy2);
+
+            // Agregar un tercer ejemplar solo para el libro 10 (para caso de prueba)
+            if (i == 9) { // Libro 10 (índice 9)
+                Copy copy3 = new Copy(
+                        String.format("COPY-%03d-3", i + 1),
+                        CopyState.AVAILABLE,
+                        CopyOrigin.PURCHASE,
+                        book);
+                copies.add(copy3);
+            }
         }
 
         return copies;

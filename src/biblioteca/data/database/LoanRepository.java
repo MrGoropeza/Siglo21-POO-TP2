@@ -116,12 +116,12 @@ public class LoanRepository {
     }
 
     /**
-     * Encuentra préstamos vencidos (fecha de vencimiento pasada y aún activos).
+     * Find all overdue loans (not yet returned and past due date)
      */
     public List<Loan> findOverdueLoans() {
         LocalDate today = LocalDate.now();
         return loans.stream()
-                .filter(loan -> loan.getState() == LoanState.ACTIVE)
+                .filter(loan -> loan.getState() == LoanState.ACTIVE || loan.getState() == LoanState.OVERDUE)
                 .filter(loan -> loan.getDueDate().isBefore(today))
                 .collect(Collectors.toList());
     }
@@ -146,11 +146,12 @@ public class LoanRepository {
 
     /**
      * Encuentra un préstamo activo para un ejemplar específico.
+     * Incluye tanto préstamos ACTIVE como OVERDUE (ambos son "prestados")
      */
     public Loan findActiveLoanByCopy(Copy copy) {
         return loans.stream()
                 .filter(loan -> loan.getCopy().getCode().equals(copy.getCode()))
-                .filter(loan -> loan.getState() == LoanState.ACTIVE)
+                .filter(loan -> loan.getState() == LoanState.ACTIVE || loan.getState() == LoanState.OVERDUE)
                 .findFirst()
                 .orElse(null);
     }
@@ -162,7 +163,7 @@ public class LoanRepository {
         LocalDate today = LocalDate.now();
         return loans.stream()
                 .filter(loan -> loan.getMember().getId().equals(memberId))
-                .filter(loan -> loan.getState() == LoanState.ACTIVE)
+                .filter(loan -> loan.getState() == LoanState.ACTIVE || loan.getState() == LoanState.OVERDUE)
                 .filter(loan -> loan.getDueDate().isBefore(today))
                 .collect(Collectors.toList());
     }
@@ -174,7 +175,7 @@ public class LoanRepository {
         LocalDate today = LocalDate.now();
         return loans.stream()
                 .filter(loan -> loan.getMember().getId().equals(member.getId()))
-                .filter(loan -> loan.getState() == LoanState.ACTIVE)
+                .filter(loan -> loan.getState() == LoanState.ACTIVE || loan.getState() == LoanState.OVERDUE)
                 .filter(loan -> loan.getDueDate().isBefore(today))
                 .collect(Collectors.toList());
     }

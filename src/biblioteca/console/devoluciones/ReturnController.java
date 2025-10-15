@@ -52,7 +52,6 @@ public class ReturnController {
     }
 
     private void registerReturn() {
-        DisplayHelper.renderSubtitle("Registrar Devolución");
         registerReturnForm.display();
     }
 

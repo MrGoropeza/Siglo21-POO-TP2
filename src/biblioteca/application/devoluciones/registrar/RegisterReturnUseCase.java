@@ -3,10 +3,10 @@ package biblioteca.application.devoluciones.registrar;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+import biblioteca.data.database.CopyRepository;
 import biblioteca.data.database.FineRepository;
 import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.SystemParametersRepository;
-import biblioteca.data.database.CopyRepository;
 import biblioteca.domain.entities.Copy;
 import biblioteca.domain.entities.Fine;
 import biblioteca.domain.entities.Loan;
@@ -63,7 +63,7 @@ public class RegisterReturnUseCase {
         Fine fine = null;
         if (delayDays > 0) {
             fine = calculateFine(activeLoan, delayDays);
-            fineRepository.save(fine);
+            fine = fineRepository.save(fine); // Capture the fine with generated ID
         }
 
         // 5. Update copy state to AVAILABLE
