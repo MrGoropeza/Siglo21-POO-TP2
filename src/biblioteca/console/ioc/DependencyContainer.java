@@ -13,11 +13,14 @@ import biblioteca.application.socios.consultar.QueryMemberUseCase;
 import biblioteca.application.socios.modificar.ModifyMemberUseCase;
 import biblioteca.application.socios.pagar_multa.PayFineUseCase;
 import biblioteca.application.socios.registrar.RegisterMemberUseCase;
+import biblioteca.application.usecases.report.GenerateReportUseCase;
 import biblioteca.console.controllers.BookController;
 import biblioteca.console.controllers.ConfigController;
 import biblioteca.console.controllers.LoanController;
 import biblioteca.console.controllers.MainController;
 import biblioteca.console.controllers.MemberController;
+import biblioteca.console.controllers.NotificationController;
+import biblioteca.console.controllers.ReportController;
 import biblioteca.console.controllers.ReturnController;
 import biblioteca.console.forms.AddStockForm;
 import biblioteca.console.forms.DeleteBookForm;
@@ -38,6 +41,7 @@ import biblioteca.data.database.CopyRepository;
 import biblioteca.data.database.FineRepository;
 import biblioteca.data.database.LoanRepository;
 import biblioteca.data.database.MemberRepository;
+import biblioteca.data.database.NotificationRepository;
 import biblioteca.data.database.PublisherRepository;
 import biblioteca.data.database.SystemParametersRepository;
 import biblioteca.data.dummy.AuthorDummyData;
@@ -46,6 +50,7 @@ import biblioteca.data.dummy.CategoryDummyData;
 import biblioteca.data.dummy.CopyDummyData;
 import biblioteca.data.dummy.FineDummyData;
 import biblioteca.data.dummy.LoanDummyData;
+import biblioteca.data.dummy.NotificationDummyData;
 import biblioteca.data.dummy.PublisherDummyData;
 
 /**
@@ -62,6 +67,7 @@ public class DependencyContainer {
     private LoanRepository loanRepository;
     private FineRepository fineRepository;
     private SystemParametersRepository systemParametersRepository;
+    private NotificationRepository notificationRepository;
 
     private RegisterBookUseCase registerBookUseCase;
     private AddStockUseCase addStockUseCase;
@@ -76,6 +82,7 @@ public class DependencyContainer {
     private QueryReturnsUseCase queryReturnsUseCase;
     private ViewConfigUseCase viewConfigUseCase;
     private UpdateConfigUseCase updateConfigUseCase;
+    private GenerateReportUseCase generateReportUseCase;
 
     private RegisterBookForm registerBookForm;
     private AddStockForm addStockForm;
@@ -95,6 +102,8 @@ public class DependencyContainer {
     private LoanController loanController;
     private ReturnController returnController;
     private ConfigController configController;
+    private ReportController reportController;
+    private NotificationController notificationController;
     private MainController mainController;
 
     /**
@@ -277,6 +286,7 @@ public class DependencyContainer {
         loanRepository = new LoanRepository(); // Se cargarán datos dummy después
         fineRepository = new FineRepository();
         systemParametersRepository = new SystemParametersRepository();
+        notificationRepository = new NotificationRepository();
 
         // Cargar datos dummy de repositorios base
         authorRepository.loadDummyData(AuthorDummyData.getAuthors());
@@ -299,6 +309,10 @@ public class DependencyContainer {
 
         // Cargar datos dummy de multas (depende de miembros)
         FineDummyData.loadDummyFines(fineRepository, memberRepository);
+
+        // Cargar datos dummy de notificaciones (depende de miembros)
+        notificationRepository.loadDummyData(NotificationDummyData.getNotifications(
+                memberRepository.findAll()));
     }
 
     private void initializeUseCases() {
@@ -332,6 +346,7 @@ public class DependencyContainer {
         queryReturnsUseCase = new QueryReturnsUseCase(loanRepository, fineRepository);
         viewConfigUseCase = new ViewConfigUseCase(systemParametersRepository);
         updateConfigUseCase = new UpdateConfigUseCase(systemParametersRepository);
+        generateReportUseCase = new GenerateReportUseCase(memberRepository, loanRepository, fineRepository);
     }
 
     private void initializeForms() {
@@ -395,12 +410,18 @@ public class DependencyContainer {
 
         configController = new ConfigController(viewConfigUseCase, updateConfigUseCase);
 
+        reportController = new ReportController(memberRepository, loanRepository, fineRepository);
+
+        notificationController = new NotificationController(notificationRepository);
+
         mainController = new MainController(
                 bookController,
                 memberController,
                 loanController,
                 returnController,
                 configController,
+                reportController,
+                notificationController,
                 bookRepository,
                 authorRepository,
                 categoryRepository,
